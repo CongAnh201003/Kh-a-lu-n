@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayGate - Bảng Đối Soát Giao Dịch Ngân Hàng & Hệ Thống</title>
+  <meta name="description" content="Hệ thống đối soát giao dịch thời gian thực giữa App PayGate và Cổng Ngân hàng / PayOS">
+
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+  <div class="app-layout">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="logo">
+          <div class="logo-icon-wrap">
+            <i class="fa-solid fa-bolt logo-icon"></i>
+          </div>
+          <div class="logo-text">
+            <span class="logo-title">PayGate</span>
+            <span class="logo-badge">PRO</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Đóng Menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- Group 0: Quản lý giao dịch & thống kê -->
+        <div class="nav-group-title">QUẢN LÝ GIAO DỊCH &amp; THỐNG KÊ</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="index.html#kpi" class="nav-link">
+              <i class="fa-solid fa-list-check nav-icon"></i>
+              <span>Thẻ số liệu KPI</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="index.html#charts" class="nav-link">
+              <i class="fa-solid fa-chart-line nav-icon"></i>
+              <span>Biểu đồ</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Group 1: Giao dịch & Đối soát -->
+        <div class="nav-group-title">GIAO DỊCH &amp; ĐỐI SOÁT</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="index.html#thu" class="nav-link">
+              <i class="fa-solid fa-arrow-down nav-icon"></i>
+              <span>Thu</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="index.html#chi" class="nav-link">
+              <i class="fa-solid fa-arrow-up nav-icon"></i>
+              <span>Chi</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="doisoat.html" class="nav-link active">
+              <i class="fa-solid fa-arrows-rotate nav-icon"></i>
+              <span>Đối soát</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="index.html#cai-dat" class="nav-link">
+              <i class="fa-solid fa-gear nav-icon"></i>
+              <span>Cài đặt</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-pulse"></span>
+          <div class="status-info">
+            <span class="status-title">Hệ thống Gateway</span>
+            <span class="status-desc">Hoạt động ổn định (99.98%)</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Mở Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="breadcrumb">
+            <span class="breadcrumb-app">PayGate</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-app">Giao dịch &amp; Đối soát</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Đối soát</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <a href="index.html" class="btn-refresh" style="text-decoration:none;">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Về Dashboard Biểu đồ</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <!-- BẢNG ĐỐI SOÁT GIAO DỊCH -->
+        <div class="view-panel" id="doiSoatView">
+          <div class="thu-page-header">
+            <div class="page-header-row">
+              <div class="title-group">
+                <h1 class="thu-page-title">Bảng Đối Soát Giao Dịch</h1>
+                <p class="page-subtitle">Đối chiếu tự động thời gian thực giữa Hệ thống App PayGate &amp; Cổng Ngân hàng / PayOS</p>
+              </div>
+              <div class="header-actions">
+                <button type="button" class="btn-refresh" id="btnRunReconcile" title="Chạy quét đối chiếu dữ liệu mới nhất">
+                  <i class="fa-solid fa-bolt"></i>
+                  <span>Chạy đối soát tức thì</span>
+                </button>
+                <button type="button" class="btn-thu-export" id="btnExportReconcile" title="Xuất báo cáo đối soát ra Excel">
+                  <i class="fa-solid fa-file-excel"></i>
+                  <span>Xuất Excel Đối Soát</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Thẻ KPI tóm tắt tình trạng đối soát -->
+          <div class="kpi-mini-grid">
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon blue"><i class="fa-solid fa-list-check"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">Tổng lượt đối soát</div>
+                <div class="kpi-mini-val" id="reconcileTotalCount">1,280 GD</div>
+                <div class="kpi-mini-change up"><i class="fa-solid fa-check-double"></i> Đã xử lý 100% phiên T9</div>
+              </div>
+            </div>
+
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon green"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">MATCHED (Khớp hoàn toàn)</div>
+                <div class="kpi-mini-val text-green-glow" id="reconcileMatchedCount">1,185 GD</div>
+                <div class="kpi-mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> Tỷ lệ khớp: 92.6%</div>
+              </div>
+            </div>
+
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">Cần can thiệp xử lý</div>
+                <div class="kpi-mini-val text-orange-glow" id="reconcileIssueCount">95 GD</div>
+                <div class="kpi-mini-change down"><i class="fa-solid fa-circle-exclamation"></i> Lệch tiền / Sai mã đơn</div>
+              </div>
+            </div>
+
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon purple"><i class="fa-solid fa-scale-unbalanced"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">Tổng lệch tiền phát hiện</div>
+                <div class="kpi-mini-val text-red-glow" id="reconcileDiffAmount">-480,000 ₫</div>
+                <div class="kpi-mini-change"><i class="fa-solid fa-coins"></i> Cần hoàn / truy thu</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thanh tìm kiếm & bộ lọc nâng cao cho Đối soát -->
+          <div class="thu-toolbar-row">
+            <div class="thu-filter-group">
+              <div class="thu-search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="doiSoatSearchInput" class="thu-input" placeholder="Tìm mã đối soát, mã đơn, bank, nội dung CK...">
+              </div>
+
+              <div class="thu-select-wrapper">
+                <select id="doiSoatStatusFilter" class="thu-select">
+                  <option value="all">Tất cả trạng thái đối soát</option>
+                  <option value="MATCHED">🟢 MATCHED (Khớp hoàn toàn)</option>
+                  <option value="AMOUNT_MISMATCH">🟠 AMOUNT_MISMATCH (Lệch tiền)</option>
+                  <option value="CODE_MISMATCH">🟣 CODE_MISMATCH (Sai mã đơn)</option>
+                  <option value="MISSING_IN_APP">🔴 MISSING_IN_APP (Thiếu trên App)</option>
+                  <option value="PENDING">🟡 PENDING (Chờ đối soát)</option>
+                </select>
+              </div>
+
+              <div class="thu-select-wrapper">
+                <select id="doiSoatDiffFilter" class="thu-select">
+                  <option value="all">Tất cả chênh lệch</option>
+                  <option value="has_diff">Có chênh lệch (≠ 0đ)</option>
+                  <option value="no_diff">Không chênh lệch (= 0đ)</option>
+                  <option value="negative">Chuyển thiếu (&lt; 0đ)</option>
+                  <option value="positive">Chuyển thừa (&gt; 0đ)</option>
+                </select>
+              </div>
+
+              <div class="thu-date-input-wrapper">
+                <input type="text" id="doiSoatDateInput" class="thu-input" placeholder="dd---yyyy" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                <i class="fa-regular fa-calendar-days"></i>
+              </div>
+            </div>
+
+            <div class="reconcile-legend-pills">
+              <span class="legend-pill matched"><i class="fa-solid fa-circle-check"></i> MATCHED</span>
+              <span class="legend-pill amount-diff"><i class="fa-solid fa-triangle-exclamation"></i> AMOUNT_MISMATCH</span>
+              <span class="legend-pill code-diff"><i class="fa-solid fa-font"></i> CODE_MISMATCH</span>
+              <span class="legend-pill missing"><i class="fa-solid fa-circle-xmark"></i> MISSING_IN_APP</span>
+            </div>
+          </div>
+
+          <!-- BẢNG ĐỐI SOÁT CHÍNH (ĐẦY ĐỦ 10 CỘT YÊU CẦU) -->
+          <div class="thu-table-card">
+            <div class="table-responsive">
+              <table class="thu-table reconcile-table" id="doiSoatTable">
+                <thead>
+                  <tr>
+                    <th class="col-rec">MÃ ĐỐI SOÁT</th>
+                    <th class="col-app-order">MÃ ĐƠN HỆ THỐNG</th>
+                    <th class="col-bank-ref">MÃ GD PAYOS / BANK</th>
+                    <th class="col-sys-amount">SỐ TIỀN HỆ THỐNG</th>
+                    <th class="col-real-amount">SỐ TIỀN THỰC NHẬN</th>
+                    <th class="col-diff">CHÊNH LỆCH</th>
+                    <th class="col-raw-content">NỘI DUNG CK THỰC TẾ</th>
+                    <th class="col-rec-status">TRẠNG THÁI ĐỐI SOÁT</th>
+                    <th class="col-rec-time">THỜI GIAN GIAO DỊCH</th>
+                    <th class="col-actions">THAO TÁC XỬ LÝ</th>
+                  </tr>
+                </thead>
+                <tbody id="doiSoatTableBody">
+                  <!-- HÀNG 1: AMOUNT_MISMATCH (Chuyển thiếu 10.000 đ) -->
+                  <tr data-status="AMOUNT_MISMATCH" data-diff="negative" data-search="REC-20260922-01 INV-1001 MB758930 INV1001 THANH TOAN GOI VIP">
+                    <td><span class="cell-rec-id">REC-20260922-01</span></td>
+                    <td><strong class="cell-app-code">INV-1001</strong></td>
+                    <td><span class="cell-bank-code">MB758930</span></td>
+                    <td class="text-right-num">500.000 đ</td>
+                    <td class="text-right-num text-amount-real">490.000 đ</td>
+                    <td><span class="diff-tag negative">-10.000 đ</span></td>
+                    <td><div class="cell-content-box" title="Khách gõ đúng cú pháp nhưng chuyển thiếu 10.000 đ">INV1001 THANH TOAN GOI VIP</div></td>
+                    <td><span class="rec-badge badge-amount-mismatch"><i class="fa-solid fa-triangle-exclamation"></i> AMOUNT_MISMATCH</span></td>
+                    <td class="cell-time">2026-09-22 10:05:14</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Cưỡng chế kích hoạt VIP nếu thiếu ít" onclick="handleManualMatch('INV-1001', 'REC-20260922-01', this)"><i class="fa-solid fa-handshake"></i> Khớp thủ công</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Tạo phiếu hoàn tiền hoặc hủy đơn" onclick="handleRefundOrder('INV-1001', 'REC-20260922-01')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền/Hủy</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-01', 'INV-1001', 'MB758930', '500.000 đ', '490.000 đ', '-10.000 đ', 'INV1001 THANH TOAN GOI VIP', 'AMOUNT_MISMATCH', '2026-09-22 10:05:14', 'Khách hàng chuyển thiếu 10.000 đ so với giá trị đơn. Cú pháp gõ đúng mã đơn INV-1001.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 2: CODE_MISMATCH (Gõ sai mã đơn) -->
+                  <tr data-status="CODE_MISMATCH" data-diff="no_diff" data-search="REC-20260922-02 INV-1002 MB823219 HOANG NAM CK VIP THIEU MA DON">
+                    <td><span class="cell-rec-id">REC-20260922-02</span></td>
+                    <td><strong class="cell-app-code text-muted-dash">INV-1002 (?)</strong></td>
+                    <td><span class="cell-bank-code">MB823219</span></td>
+                    <td class="text-right-num">360.000 đ</td>
+                    <td class="text-right-num text-amount-real">360.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box warn-border" title="Khách gõ tên thay vì gõ mã đơn">HOANG NAM CK VIP THIEU MA DON</div></td>
+                    <td><span class="rec-badge badge-code-mismatch"><i class="fa-solid fa-font"></i> CODE_MISMATCH</span></td>
+                    <td class="cell-time">2026-09-22 10:14:30</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Gán đơn và duyệt khớp thủ công" onclick="handleManualMatch('INV-1002', 'REC-20260922-02', this)"><i class="fa-solid fa-handshake"></i> Khớp thủ công</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Hoàn tiền hoặc hủy đơn" onclick="handleRefundOrder('INV-1002', 'REC-20260922-02')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền/Hủy</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-02', 'INV-1002', 'MB823219', '360.000 đ', '360.000 đ', '0 đ', 'HOANG NAM CK VIP THIEU MA DON', 'CODE_MISMATCH', '2026-09-22 10:14:30', 'Số tiền khớp 100% (360.000 đ) nhưng nội dung khách chỉ ghi tên cá nhân mà quên gõ mã đơn INV-1002.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 3: MATCHED (Khớp hoàn toàn) -->
+                  <tr data-status="MATCHED" data-diff="no_diff" data-search="REC-20260922-03 INV-1003 MB346391 INV-1003 LE THI MAI THANH TOAN">
+                    <td><span class="cell-rec-id">REC-20260922-03</span></td>
+                    <td><strong class="cell-app-code">INV-1003</strong></td>
+                    <td><span class="cell-bank-code">MB346391</span></td>
+                    <td class="text-right-num">550.000 đ</td>
+                    <td class="text-right-num text-amount-real">550.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box">INV-1003 LE THI MAI THANH TOAN</div></td>
+                    <td><span class="rec-badge badge-matched"><i class="fa-solid fa-circle-check"></i> MATCHED</span></td>
+                    <td class="cell-time">2026-09-22 10:20:00</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-03', 'INV-1003', 'MB346391', '550.000 đ', '550.000 đ', '0 đ', 'INV-1003 LE THI MAI THANH TOAN', 'MATCHED', '2026-09-22 10:20:00', 'Giao dịch đối soát khớp hoàn hảo cả số tiền, mã đơn và cổng ngân hàng. Hệ thống đã tự động duyệt VIP.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 4: MISSING_IN_APP (Tiền vào ngân hàng nhưng App chưa có đơn) -->
+                  <tr data-status="MISSING_IN_APP" data-diff="positive" data-search="REC-20260922-04 CHUA TAO DON MB772248 TRAN VAN DUNG QUET QR CHUA TAO DON">
+                    <td><span class="cell-rec-id">REC-20260922-04</span></td>
+                    <td><strong class="cell-app-code text-red-label">CHƯA CÓ ĐƠN</strong></td>
+                    <td><span class="cell-bank-code">MB772248</span></td>
+                    <td class="text-right-num">0 đ</td>
+                    <td class="text-right-num text-amount-real">490.000 đ</td>
+                    <td><span class="diff-tag positive">+490.000 đ</span></td>
+                    <td><div class="cell-content-box error-border" title="Tiền vào tài khoản nhưng hệ thống chưa ghi nhận đơn">TRAN VAN DUNG QUET QR CHUA TAO DON</div></td>
+                    <td><span class="rec-badge badge-missing-app"><i class="fa-solid fa-circle-xmark"></i> MISSING_IN_APP</span></td>
+                    <td class="cell-time">2026-09-22 10:35:12</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Tạo đơn bổ sung & kích hoạt VIP" onclick="handleManualMatch('MỚI', 'REC-20260922-04', this)"><i class="fa-solid fa-file-circle-plus"></i> Tạo đơn &amp; Khớp</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Hoàn tiền về tài khoản nguồn" onclick="handleRefundOrder('N/A', 'REC-20260922-04')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền/Hủy</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-04', 'CHƯA CÓ ĐƠN (N/A)', 'MB772248', '0 đ', '490.000 đ', '+490.000 đ', 'TRAN VAN DUNG QUET QR CHUA TAO DON', 'MISSING_IN_APP', '2026-09-22 10:35:12', 'Tiền đã về tài khoản ngân hàng MB nhưng người dùng chưa hoàn tất bước tạo đơn trên App hoặc gián đoạn mạng.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 5: PENDING (Đang chờ đối soát) -->
+                  <tr data-status="PENDING" data-diff="no_diff" data-search="REC-20260922-05 INV-1005 MB456947 INV1005 NGUYEN VAN E">
+                    <td><span class="cell-rec-id">REC-20260922-05</span></td>
+                    <td><strong class="cell-app-code">INV-1005</strong></td>
+                    <td><span class="cell-bank-code">MB456947</span></td>
+                    <td class="text-right-num">215.000 đ</td>
+                    <td class="text-right-num text-amount-real">215.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box">INV1005 NGUYEN VAN E</div></td>
+                    <td><span class="rec-badge badge-pending"><i class="fa-solid fa-clock"></i> PENDING</span></td>
+                    <td class="cell-time">2026-09-22 10:45:00</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Khớp ngay lập tức" onclick="handleManualMatch('INV-1005', 'REC-20260922-05', this)"><i class="fa-solid fa-check"></i> Khớp ngay</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-05', 'INV-1005', 'MB456947', '215.000 đ', '215.000 đ', '0 đ', 'INV1005 NGUYEN VAN E', 'PENDING', '2026-09-22 10:45:00', 'Giao dịch đang trong hàng đợi xử lý đối soát tự động theo chu kỳ 15 phút của hệ thống PayOS.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 6: AMOUNT_MISMATCH (Chuyển thừa 20.000 đ) -->
+                  <tr data-status="AMOUNT_MISMATCH" data-diff="positive" data-search="REC-20260922-06 INV-1006 VCB91823 INV-1006 PHAM MINH TUAN CHUYEN THUA">
+                    <td><span class="cell-rec-id">REC-20260922-06</span></td>
+                    <td><strong class="cell-app-code">INV-1006</strong></td>
+                    <td><span class="cell-bank-code">VCB91823</span></td>
+                    <td class="text-right-num">680.000 đ</td>
+                    <td class="text-right-num text-amount-real">700.000 đ</td>
+                    <td><span class="diff-tag positive">+20.000 đ</span></td>
+                    <td><div class="cell-content-box">INV-1006 PHAM MINH TUAN CHUYEN THUA</div></td>
+                    <td><span class="rec-badge badge-amount-mismatch"><i class="fa-solid fa-triangle-exclamation"></i> AMOUNT_MISMATCH</span></td>
+                    <td class="cell-time">2026-09-22 11:10:20</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Khớp đơn và kích hoạt VIP" onclick="handleManualMatch('INV-1006', 'REC-20260922-06', this)"><i class="fa-solid fa-handshake"></i> Khớp thủ công</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Hoàn phần tiền chuyển thừa 20.000đ" onclick="handleRefundOrder('INV-1006', 'REC-20260922-06')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền thừa</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-06', 'INV-1006', 'VCB91823', '680.000 đ', '700.000 đ', '+20.000 đ', 'INV-1006 PHAM MINH TUAN CHUYEN THUA', 'AMOUNT_MISMATCH', '2026-09-22 11:10:20', 'Khách hàng chuyển thừa 20.000 đ so với giá trị gói VIP. Có thể kích hoạt VIP và ghi nhận hoàn lại số dư thừa.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 7: MATCHED (Khớp hoàn toàn) -->
+                  <tr data-status="MATCHED" data-diff="no_diff" data-search="REC-20260922-07 INV-1007 TCB18293 INV1007 DANG THU HIEN">
+                    <td><span class="cell-rec-id">REC-20260922-07</span></td>
+                    <td><strong class="cell-app-code">INV-1007</strong></td>
+                    <td><span class="cell-bank-code">TCB18293</span></td>
+                    <td class="text-right-num">350.000 đ</td>
+                    <td class="text-right-num text-amount-real">350.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box">INV1007 DANG THU HIEN</div></td>
+                    <td><span class="rec-badge badge-matched"><i class="fa-solid fa-circle-check"></i> MATCHED</span></td>
+                    <td class="cell-time">2026-09-22 11:30:15</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-07', 'INV-1007', 'TCB18293', '350.000 đ', '350.000 đ', '0 đ', 'INV1007 DANG THU HIEN', 'MATCHED', '2026-09-22 11:30:15', 'Giao dịch đối soát thành công 100%. Không có bất kỳ sai lệch nào.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Chân bảng đối soát -->
+            <div class="thu-table-footer">
+              <span class="thu-footer-info" id="doiSoatTableInfo">Hiển thị 7 / 7 phiên đối soát</span>
+              <div class="thu-pagination">
+                <button type="button" class="btn-page-nav disabled" title="Trang trước"><i class="fa-solid fa-chevron-left"></i></button>
+                <button type="button" class="btn-page active">1</button>
+                <button type="button" class="btn-page">2</button>
+                <button type="button" class="btn-page">3</button>
+                <button type="button" class="btn-page-nav" title="Trang tiếp theo"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL CHI TIẾT ĐỐI SOÁT (SO SÁNH 2 BÊN HỆ THỐNG APP VS NGÂN HÀNG / PAYOS) -->
+  <div class="modal-backdrop" id="reconcileDetailModal">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon modal-icon-purple"><i class="fa-solid fa-scale-balanced"></i></div>
+          <div>
+            <h3 class="modal-title">Chi Tiết Log Đối Soát Giao Dịch</h3>
+            <p class="modal-subtitle">
+              Mã đối soát: <strong id="modalRecId" class="text-purple">REC-20260922-01</strong> &bull; 
+              Thời gian GD: <span id="modalRecTime">2026-09-22 10:05:14</span>
+            </p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeReconcileDetailBtn" onclick="closeReconcileDetail()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="rec-modal-status-banner">
+          <div class="status-banner-left">
+            <span class="status-banner-label">Kết quả đối soát:</span>
+            <span id="modalRecStatusBadge" class="rec-badge badge-amount-mismatch">AMOUNT_MISMATCH</span>
+          </div>
+          <div class="status-banner-right">
+            <span>Chênh lệch:</span>
+            <span id="modalDiffAmount" class="diff-tag negative">-10.000 đ</span>
+          </div>
+        </div>
+
+        <div class="rec-analysis-box" id="modalAnalysisBox">
+          <i class="fa-solid fa-circle-info"></i>
+          <span id="modalAnalysisNote">Khách hàng chuyển thiếu 10.000 đ so với giá trị đơn hàng yêu cầu. Cú pháp gõ đúng mã đơn INV-1001.</span>
+        </div>
+
+        <div class="rec-compare-grid">
+          <!-- BÊN TRÁI: DỮ LIỆU HỆ THỐNG (APP) -->
+          <div class="rec-compare-card app-side">
+            <div class="compare-card-header">
+              <div class="card-header-title">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <span>HỆ THỐNG APP PAYGATE</span>
+              </div>
+              <span class="side-tag app-tag">Đơn hàng gốc</span>
+            </div>
+            <div class="compare-card-body">
+              <div class="compare-field">
+                <span class="field-lbl">Mã đơn hệ thống:</span>
+                <span class="field-val highlight-val" id="modalAppOrderId">INV-1001</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Số tiền hệ thống yêu cầu:</span>
+                <span class="field-val amount-val" id="modalSysAmount">500.000 đ</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Gói dịch vụ đăng ký:</span>
+                <span class="field-val" id="modalPackageName">Gói Hội Viên VIP (1 Tháng)</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Trạng thái trên App:</span>
+                <span class="field-val text-amber" id="modalAppStatus"><i class="fa-solid fa-clock"></i> Chờ thanh toán</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Thời gian tạo đơn:</span>
+                <span class="field-val text-muted-val" id="modalAppCreatedAt">2026-09-22 10:04:12</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Mã khách hàng / SĐT:</span>
+                <span class="field-val text-muted-val">USER_9882 (0982***333)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BÊN PHẢI: DỮ LIỆU CỔNG NGÂN HÀNG / PAYOS -->
+          <div class="rec-compare-card bank-side">
+            <div class="compare-card-header">
+              <div class="card-header-title">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>CỔNG NGÂN HÀNG / PAYOS</span>
+              </div>
+              <span class="side-tag bank-tag">Báo có thực tế</span>
+            </div>
+            <div class="compare-card-body">
+              <div class="compare-field">
+                <span class="field-lbl">Mã GD PayOS / Bank:</span>
+                <span class="field-val font-mono text-cyan" id="modalBankRef">MB758930</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Số tiền thực nhận (Báo có):</span>
+                <span class="field-val amount-real-val" id="modalRealAmount">490.000 đ</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Nội dung CK thực tế:</span>
+                <div class="field-content-raw" id="modalRawContent">INV1001 THANH TOAN GOI VIP</div>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Ngân hàng thụ hưởng:</span>
+                <span class="field-val text-muted-val"><i class="fa-solid fa-landmark"></i> MB Bank (TK: 998829988)</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Thời gian ngân hàng ghi nhận:</span>
+                <span class="field-val text-muted-val" id="modalBankTime">2026-09-22 10:05:14</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Trạng thái PayOS / Bank:</span>
+                <span class="field-val text-emerald"><i class="fa-solid fa-circle-check"></i> Đã ghi có thành công</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rec-action-guidance" id="modalGuidanceBox">
+          <div class="guidance-title"><i class="fa-solid fa-lightbulb"></i> Khuyến nghị xử lý nghiệp vụ:</div>
+          <p class="guidance-desc" id="modalGuidanceText">
+            Khoản chênh lệch thiếu ít (-10.000 đ). Người vận hành có thể bấm <strong>[Khớp thủ công]</strong> để cưỡng chế kích hoạt gói VIP cho khách hoặc bấm <strong>[Hoàn tiền / Hủy]</strong> để tạo yêu cầu hoàn trả số tiền qua ngân hàng.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-rec-action btn-match" id="modalActionMatchBtn">
+          <i class="fa-solid fa-handshake"></i> Khớp thủ công &amp; Kích hoạt VIP
+        </button>
+        <button type="button" class="btn-rec-action btn-refund" id="modalActionRefundBtn">
+          <i class="fa-solid fa-rotate-left"></i> Hoàn tiền / Hủy giao dịch
+        </button>
+        <button type="button" class="btn-cancel" onclick="closeReconcileDetail()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script>
+    // Khởi tạo tương tác riêng cho trang doisoat.html
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuToggleBtn = document.getElementById('menuToggleBtn');
+      const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+      const sidebar = document.getElementById('sidebar');
+
+      if (menuToggleBtn && sidebar) {
+        menuToggleBtn.addEventListener('click', () => sidebar.classList.add('open'));
+      }
+      if (sidebarCloseBtn && sidebar) {
+        sidebarCloseBtn.addEventListener('click', () => sidebar.classList.remove('open'));
+      }
+
+      setupDoiSoatStandalone();
+    });
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-info';
+      toast.innerHTML = `<i class="fa-solid ${icon} toast-icon"></i><span class="toast-text">${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(30px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function setupDoiSoatStandalone() {
+      const searchInput = document.getElementById('doiSoatSearchInput');
+      const statusFilter = document.getElementById('doiSoatStatusFilter');
+      const diffFilter = document.getElementById('doiSoatDiffFilter');
+      const dateInput = document.getElementById('doiSoatDateInput');
+      const tableBody = document.getElementById('doiSoatTableBody');
+      const tableInfo = document.getElementById('doiSoatTableInfo');
+      const btnExport = document.getElementById('btnExportReconcile');
+      const btnRunReconcile = document.getElementById('btnRunReconcile');
+
+      function filterTable() {
+        if (!tableBody) return;
+        const query = (searchInput?.value || '').toLowerCase().trim();
+        const status = statusFilter?.value || 'all';
+        const diff = diffFilter?.value || 'all';
+        const rows = tableBody.querySelectorAll('tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+          const searchData = (row.getAttribute('data-search') || '').toLowerCase();
+          const rowStatus = row.getAttribute('data-status') || '';
+          const rowDiff = row.getAttribute('data-diff') || '';
+
+          const matchQuery = !query || searchData.includes(query);
+          const matchStatus = status === 'all' || rowStatus === status;
+
+          let matchDiff = true;
+          if (diff === 'has_diff') {
+            matchDiff = rowDiff === 'negative' || rowDiff === 'positive';
+          } else if (diff === 'no_diff') {
+            matchDiff = rowDiff === 'no_diff';
+          } else if (diff === 'negative') {
+            matchDiff = rowDiff === 'negative';
+          } else if (diff === 'positive') {
+            matchDiff = rowDiff === 'positive';
+          }
+
+          if (matchQuery && matchStatus && matchDiff) {
+            row.style.display = '';
+            visibleCount++;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+
+        if (tableInfo) {
+          tableInfo.textContent = `Hiển thị ${visibleCount} / ${rows.length} phiên đối soát`;
+        }
+      }
+
+      if (searchInput) searchInput.addEventListener('input', filterTable);
+      if (statusFilter) statusFilter.addEventListener('change', filterTable);
+      if (diffFilter) diffFilter.addEventListener('change', filterTable);
+      if (dateInput) dateInput.addEventListener('change', filterTable);
+
+      if (btnExport) {
+        btnExport.addEventListener('click', () => {
+          showToast('Đã xuất thành công Báo cáo Đối soát ra file Excel (PayGate_DoiSoat_202609.xlsx)', 'success');
+        });
+      }
+
+      if (btnRunReconcile) {
+        btnRunReconcile.addEventListener('click', () => {
+          const icon = btnRunReconcile.querySelector('i');
+          if (icon) icon.className = 'fa-solid fa-spinner fa-spin';
+          btnRunReconcile.disabled = true;
+          showToast('Đang kết nối cổng PayOS & Ngân hàng đối chiếu dữ liệu...', 'info');
+
+          setTimeout(() => {
+            if (icon) icon.className = 'fa-solid fa-bolt';
+            btnRunReconcile.disabled = false;
+            showToast('Đối soát hoàn tất! Toàn bộ 1,280 giao dịch đã được đồng bộ chuẩn xác.', 'success');
+          }, 1200);
+        });
+      }
+    }
+
+    let currentActiveRec = null;
+
+    function handleManualMatch(orderId, recId, btnElement) {
+      const row = btnElement ? btnElement.closest('tr') : document.querySelector(`tr[data-search*="${recId}"]`);
+
+      if (confirm(`Bạn có chắc chắn muốn CƯỠNG CHẾ KHỚP THỦ CÔNG & KÍCH HOẠT GÓI VIP cho đơn [${orderId}] (Phiên ${recId}) không?`)) {
+        if (row) {
+          row.setAttribute('data-status', 'MATCHED');
+          row.setAttribute('data-diff', 'no_diff');
+
+          const orderCell = row.querySelector('.cell-app-code');
+          if (orderCell) {
+            orderCell.className = 'cell-app-code';
+            orderCell.textContent = orderId === 'MỚI' ? 'INV-1004 (Đã tạo)' : orderId.replace(' (?)', '');
+          }
+
+          const statusBadge = row.querySelector('.rec-badge');
+          if (statusBadge) {
+            statusBadge.className = 'rec-badge badge-matched';
+            statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> MATCHED';
+          }
+
+          const diffTag = row.querySelector('.diff-tag');
+          if (diffTag) {
+            diffTag.className = 'diff-tag neutral';
+            diffTag.textContent = '0 đ (Đã duyệt)';
+          }
+
+          if (btnElement) {
+            btnElement.disabled = true;
+            btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Đã khớp';
+            btnElement.style.background = 'rgba(16, 185, 129, 0.2)';
+            btnElement.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+            btnElement.style.color = '#34d399';
+          }
+        }
+
+        if (currentActiveRec && currentActiveRec.recId === recId) {
+          const modalBadge = document.getElementById('modalRecStatusBadge');
+          if (modalBadge) {
+            modalBadge.className = 'rec-badge badge-matched';
+            modalBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> MATCHED';
+          }
+          const modalDiff = document.getElementById('modalDiffAmount');
+          if (modalDiff) {
+            modalDiff.className = 'diff-tag neutral';
+            modalDiff.textContent = '0 đ (Đã duyệt)';
+          }
+          const noteBox = document.getElementById('modalAnalysisNote');
+          if (noteBox) {
+            noteBox.textContent = 'Giao dịch đã được người vận hành cưỡng chế khớp thủ công và kích hoạt VIP thành công!';
+          }
+          const modalActionMatchBtn = document.getElementById('modalActionMatchBtn');
+          if (modalActionMatchBtn) {
+            modalActionMatchBtn.disabled = true;
+            modalActionMatchBtn.innerHTML = '<i class="fa-solid fa-check"></i> Đã kích hoạt VIP';
+          }
+        }
+
+        showToast(`[${recId}] Cưỡng chế khớp thành công! Tài khoản VIP đã được kích hoạt ngay lập tức.`, 'success');
+      }
+    }
+
+    function handleRefundOrder(orderId, recId) {
+      if (confirm(`Tạo lệnh HOÀN TIỀN / HỦY GIAO DỊCH cho phiên đối soát [${recId}] (Đơn: ${orderId})?`)) {
+        showToast(`[${recId}] Đã tạo phiếu yêu cầu hoàn tiền về ngân hàng của khách. Đơn đã được đánh dấu hủy thủ công.`, 'info');
+
+        const noteBox = document.getElementById('modalAnalysisNote');
+        if (noteBox && currentActiveRec && currentActiveRec.recId === recId) {
+          noteBox.textContent = 'Lệnh hoàn tiền / Hủy giao dịch đã được ghi nhận. Chờ kế toán thực hiện UNC chuyển khoản lại cho khách.';
+        }
+      }
+    }
+
+    function openReconcileDetail(recId, orderId, bankCode, sysAmt, realAmt, diff, rawContent, status, time, note) {
+      currentActiveRec = { recId, orderId, bankCode, sysAmt, realAmt, diff, rawContent, status, time, note };
+
+      const modal = document.getElementById('reconcileDetailModal');
+      if (!modal) return;
+
+      const modalRecId = document.getElementById('modalRecId');
+      const modalRecTime = document.getElementById('modalRecTime');
+      const modalRecStatusBadge = document.getElementById('modalRecStatusBadge');
+      const modalDiffAmount = document.getElementById('modalDiffAmount');
+      const modalAnalysisNote = document.getElementById('modalAnalysisNote');
+      const modalAppOrderId = document.getElementById('modalAppOrderId');
+      const modalSysAmount = document.getElementById('modalSysAmount');
+      const modalBankRef = document.getElementById('modalBankRef');
+      const modalRealAmount = document.getElementById('modalRealAmount');
+      const modalRawContent = document.getElementById('modalRawContent');
+      const modalBankTime = document.getElementById('modalBankTime');
+      const modalGuidanceText = document.getElementById('modalGuidanceText');
+      const modalActionMatchBtn = document.getElementById('modalActionMatchBtn');
+      const modalActionRefundBtn = document.getElementById('modalActionRefundBtn');
+
+      if (modalRecId) modalRecId.textContent = recId;
+      if (modalRecTime) modalRecTime.textContent = time;
+      if (modalAppOrderId) modalAppOrderId.textContent = orderId;
+      if (modalSysAmount) modalSysAmount.textContent = sysAmt;
+      if (modalBankRef) modalBankRef.textContent = bankCode;
+      if (modalRealAmount) modalRealAmount.textContent = realAmt;
+      if (modalRawContent) modalRawContent.textContent = rawContent;
+      if (modalBankTime) modalBankTime.textContent = time;
+      if (modalAnalysisNote) modalAnalysisNote.textContent = note;
+
+      if (modalRecStatusBadge) {
+        modalRecStatusBadge.className = 'rec-badge';
+        let icon = 'fa-circle-check';
+        if (status === 'MATCHED') {
+          modalRecStatusBadge.classList.add('badge-matched');
+          icon = 'fa-circle-check';
+        } else if (status === 'AMOUNT_MISMATCH') {
+          modalRecStatusBadge.classList.add('badge-amount-mismatch');
+          icon = 'fa-triangle-exclamation';
+        } else if (status === 'CODE_MISMATCH') {
+          modalRecStatusBadge.classList.add('badge-code-mismatch');
+          icon = 'fa-font';
+        } else if (status === 'MISSING_IN_APP') {
+          modalRecStatusBadge.classList.add('badge-missing-app');
+          icon = 'fa-circle-xmark';
+        } else if (status === 'PENDING') {
+          modalRecStatusBadge.classList.add('badge-pending');
+          icon = 'fa-clock';
+        }
+        modalRecStatusBadge.innerHTML = `<i class="fa-solid ${icon}"></i> ${status}`;
+      }
+
+      if (modalDiffAmount) {
+        modalDiffAmount.className = 'diff-tag';
+        if (diff.startsWith('-')) {
+          modalDiffAmount.classList.add('negative');
+        } else if (diff.startsWith('+')) {
+          modalDiffAmount.classList.add('positive');
+        } else {
+          modalDiffAmount.classList.add('neutral');
+        }
+        modalDiffAmount.textContent = diff;
+      }
+
+      if (modalGuidanceText) {
+        if (status === 'MATCHED') {
+          modalGuidanceText.innerHTML = 'Giao dịch đã <strong>khớp hoàn toàn cả tiền và mã đơn</strong>. Hệ thống PayGate đã tự động kích hoạt tài khoản VIP, không cần can thiệp thủ công.';
+        } else if (status === 'AMOUNT_MISMATCH') {
+          modalGuidanceText.innerHTML = `Chênh lệch <strong>${diff}</strong>. Nếu chuyển thiếu ít, bạn có thể bấm <strong>[Khớp thủ công]</strong> để kích hoạt dịch vụ cho khách; nếu sai lệch lớn, hãy tạo lệnh <strong>[Hoàn tiền / Hủy]</strong>.`;
+        } else if (status === 'CODE_MISMATCH') {
+          modalGuidanceText.innerHTML = 'Khách hàng chuyển <strong>đúng tiền nhưng gõ sai hoặc thiếu mã đơn</strong> trong nội dung CK. Bạn hãy kiểm tra tên và bấm <strong>[Khớp thủ công]</strong> để gán mã đơn chính xác.';
+        } else if (status === 'MISSING_IN_APP') {
+          modalGuidanceText.innerHTML = 'Tiền đã báo có tại ngân hàng nhưng <strong>App chưa kịp tạo đơn hàng</strong>. Bấm <strong>[Khớp thủ công]</strong> để tạo đơn mới và kích hoạt VIP, hoặc <strong>[Hoàn tiền / Hủy]</strong> để trả lại tiền.';
+        } else if (status === 'PENDING') {
+          modalGuidanceText.innerHTML = 'Giao dịch đang chờ chu kỳ đối soát tự động tiếp theo. Bạn có thể bấm <strong>[Khớp ngay]</strong> để hoàn tất tức thì.';
+        }
+      }
+
+      if (modalActionMatchBtn) {
+        if (status === 'MATCHED') {
+          modalActionMatchBtn.style.display = 'none';
+        } else {
+          modalActionMatchBtn.style.display = 'inline-flex';
+          modalActionMatchBtn.disabled = false;
+          modalActionMatchBtn.innerHTML = '<i class="fa-solid fa-handshake"></i> Khớp thủ công & Kích hoạt VIP';
+          modalActionMatchBtn.onclick = () => handleManualMatch(orderId, recId, null);
+        }
+      }
+
+      if (modalActionRefundBtn) {
+        if (status === 'MATCHED') {
+          modalActionRefundBtn.style.display = 'none';
+        } else {
+          modalActionRefundBtn.style.display = 'inline-flex';
+          modalActionRefundBtn.onclick = () => handleRefundOrder(orderId, recId);
+        }
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeReconcileDetail() {
+      const modal = document.getElementById('reconcileDetailModal');
+      if (modal) modal.classList.remove('active');
+    }
+  </script>
+</body>
+</html>

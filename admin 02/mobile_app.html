@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Mobile Screens</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* ==========================================================
+               BẢNG MÀU CHỦ ĐẠO THEO YÊU CẦU:
+               - NỀN (BACKGROUND): Hồng Vàng (Rose Gold) mềm mại, quý phái
+               - NÚT BẤM (BUTTONS): Nâu cafe chocolate (Warm Mocha Brown)
+               ========================================================== */
+            --theme-rosegold-bg: #F8E3DA;  /* Nền hồng vàng (Rose Gold / Pink-Gold) sang trọng */
+            --theme-rosegold-soft: #FBF0EB;/* Hồng vàng nhạt cho surface tint */
+            --theme-rosegold-grad: linear-gradient(165deg, #F9DFE7 0%, #F8E4D9 35%, #FBF1D5 70%, #FCE4DB 100%);
+            
+            --theme-cream: #FCF8D5;        /* Vàng kem nhạt */
+            --theme-pink: #F6CFDF;         /* Hồng phấn pastel */
+            --theme-brown: #684E3F;        /* Nâu cafe mocha chủ đạo cho nút */
+
+            /* Biến thể độ tương phản & chữ */
+            --theme-brown-dark: #3E2B20;   /* Nâu espresso đậm - màu chữ chính, viền điện thoại */
+            --theme-brown-hover: #533B2E;  /* Nâu sẫm khi hover nút bấm */
+            --theme-brown-light: #F7EFE9;  /* Nền nâu kem siêu nhạt cho chip, tag */
+
+            --theme-pink-hover: #ECA4C0;   /* Hồng hover */
+            --theme-pink-dark: #9E456A;    /* Hồng berry đậm */
+            --theme-pink-light: #FDF2F7;   /* Hồng phấn nhạt */
+
+            --theme-cream-dark: #EEDB92;   /* Vàng kem viền / thanh tiến độ */
+            --theme-cream-light: #FFFDF4;  /* Trắng kem ấm áp cho bề mặt thẻ */
+
+            /* Semantic tokens */
+            --bg-color: #F8E3DA;           /* NỀN ỨNG DỤNG HỒNG VÀNG */
+            --card-bg: #FFFFFF;            /* Nền card trắng ấm */
+            --text-main: #3E2B20;          /* Chữ chính: Nâu đậm sang trọng, tương phản cao */
+            --text-muted: #826E62;         /* Chữ phụ: Nâu taupe ấm áp */
+            
+            --primary: #684E3F;            /* NÚT BẤM CHÍNH: NÂU CAFE MOCHA */
+            --primary-light: #F7EFE9;      /* Nền sáng phụ trợ */
+            --secondary: #684E3F;          /* Đồng bộ nút bấm tông nâu */
+            --secondary-dark: #533B2E;
+            --accent: #FCF8D5;             /* Điểm nhấn: Vàng kem */
+
+            /* Màu chỉ báo chức năng */
+            --blue: #5C7EA8;
+            --green: #4E8B67;
+            --red: #C54E60;
+            --orange: #D67A43;
+            --yellow: #E5AC38;
+            --pink: #F6CFDF;
+            --purple: #8B658E;
+
+            --border-color: #F0DFD7;
+            --glass-bg: rgba(255, 255, 255, 0.90);
+            --glass-border: rgba(246, 207, 223, 0.65);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #EFE2DC 0%, #E8D6CF 50%, #ECE0D7 100%); padding: 40px; min-height: 100vh; }
+        .gallery-title { text-align: center; font-size: 32px; font-weight: 800; color: #3E2B20; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; }
+        .gallery { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; }
+        
+        .mobile-container {
+            width: 375px; height: 812px;
+            background-color: var(--bg-color);
+            background: var(--theme-rosegold-grad);
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(62, 43, 32, 0.28);
+            position: relative;
+            border: 12px solid #3E2B20;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mobile-content { flex: 1; overflow-y: auto; position: relative; }
+        .mobile-content::-webkit-scrollbar { display: none; }
+        
+        /* Utils */
+        .p-20 { padding: 20px; } .pt-20 { padding-top: 20px; } .pb-20 { padding-bottom: 20px; } .pt-40 { padding-top: 40px; } .pt-15 { padding-top: 15px; }
+        .mt-5 { margin-top: 5px; } .mt-10 { margin-top: 10px; } .mt-15 { margin-top: 15px; } .mt-20 { margin-top: 20px; } .mt-30 { margin-top: 30px; } .mt-40 { margin-top: 40px; }
+        .mb-10 { margin-bottom: 10px; } .mb-15 { margin-bottom: 15px; } .mb-20 { margin-bottom: 20px; } .mb-30 { margin-bottom: 30px; } .mb-40 { margin-bottom: 40px; }
+        .ml-5 { margin-left: 5px; } .ml-auto { margin-left: auto; }
+        .flex-col { display: flex; flex-direction: column; } .h-full { height: 100%; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .text-center { text-align: center; } .text-left { text-align: left; }
+        .text-primary { color: var(--primary); } .text-error { color: var(--red); } .text-success { color: var(--green); }
+        .text-muted { color: var(--text-muted); } .text-blue { color: var(--blue); } .text-yellow { color: var(--yellow); } .text-orange { color: var(--orange); } .text-main { color: var(--text-main); }
+        .font-bold { font-weight: 700; } .font-medium { font-weight: 500; }
+        .text-sm { font-size: 13px; } .text-lg { font-size: 18px; } .text-2xl { font-size: 24px; }
+        .w-full { width: 100%; } .flex-1 { flex: 1; } .opacity-50 { opacity: 0.5; }
+        .border-t { border-top: 1px solid var(--border-color); } .rounded-xl { border-radius: 12px; }
+        
+        .bg-pink { background-color: var(--theme-pink); color: #523727; font-weight: 600; }
+        .bg-purple { background-color: var(--purple); color: white; }
+        .bg-blue { background-color: var(--blue); color: white; }
+        .bg-orange { background-color: var(--orange); color: white; }
+        .bg-green { background-color: var(--green); color: white; }
+        .bg-red { background-color: var(--red); color: white; }
+        .bg-cream { background-color: var(--theme-cream); color: #523727; font-weight: 600; }
+        .bg-brown { background-color: var(--theme-brown); color: #FFFDF8; }
+        .bg-pink-light { background-color: var(--theme-pink-light); }
+        .bg-cream-light { background-color: var(--theme-cream-light); }
+        .bg-orange-light { background-color: #FDF0E6; }
+        .bg-blue-light { background-color: #F0F4FA; }
+        .border-blue { border-color: #D3DFEE; }
+        .border-cream { border-color: var(--theme-cream-dark); }
+        .border-pink { border-color: var(--theme-pink); }
+
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1.5px solid var(--glass-border); border-radius: 20px; box-shadow: 0 6px 18px -2px rgba(104, 78, 63, 0.06); }
+        .text-gradient { background: linear-gradient(135deg, var(--theme-brown) 0%, #A84D72 50%, var(--theme-pink) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Buttons: TẤT CẢ NÚT ĐỀU ĐỂ MÀU NÂU CAFE MOCHA ĐẬM RÕ NÉT */
+        .btn-primary { 
+            background: var(--primary); 
+            color: #FFFDF8; 
+            border: none; 
+            padding: 14px 24px; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            font-size: 15px; 
+            cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 6px 16px -2px rgba(104, 78, 63, 0.35);
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover { background: var(--theme-brown-hover); transform: translateY(-1px); box-shadow: 0 8px 20px -2px rgba(104, 78, 63, 0.45); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-secondary {
+            background: var(--theme-brown);
+            color: #FFFDF8;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 16px -2px rgba(104, 78, 63, 0.3);
+        }
+        .btn-secondary:hover { background: var(--theme-brown-hover); }
+        .btn-outline { 
+            background: #FFFFFF; 
+            color: var(--theme-brown); 
+            border: 2px solid var(--theme-brown); 
+            padding: 12px 24px; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            font-size: 15px; 
+            cursor: pointer; 
+            transition: 0.2s;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(104, 78, 63, 0.08);
+        }
+        .btn-outline:hover { background: var(--theme-brown); color: #FFFDF8; }
+        .btn-text { background: transparent; color: var(--primary); border: none; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        .btn-text:hover { color: var(--theme-brown-hover); }
+        .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 10px; }
+        .shadow-glow { box-shadow: 0 8px 18px -2px rgba(104, 78, 63, 0.35); }
+        .ai-glow-btn { 
+            background: linear-gradient(135deg, #4A3428 0%, #684E3F 60%, #9B5570 100%); 
+            box-shadow: 0 10px 20px -3px rgba(104, 78, 63, 0.38); 
+            border: none; 
+            color: #FFFDF8; 
+            padding: 14px; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            font-size: 15px; 
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .ai-glow-btn:hover { opacity: 0.95; transform: translateY(-1px); }
+
+        /* Status & Top bar */
+        .status-bar { display: flex; justify-content: space-between; padding: 12px 20px 8px; font-size: 13px; font-weight: 600; color: var(--theme-brown-dark); z-index: 10; }
+        .status-icons { display: flex; gap: 6px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: transparent; z-index: 9; color: var(--theme-brown-dark); }
+        .top-bar .title { font-weight: 700; font-size: 17px; color: var(--theme-brown-dark); }
+        .back-btn { font-size: 18px; cursor: pointer; color: var(--theme-brown); }
+
+        /* Bottom Nav */
+        .bottom-nav { 
+            background: rgba(255, 250, 247, 0.96); 
+            backdrop-filter: blur(12px); 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 14px 0 16px; 
+            border-top: 1px solid #F0DFD7; 
+            z-index: 10; 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            border-bottom-left-radius: 28px; 
+            border-bottom-right-radius: 28px; 
+            box-shadow: 0 -4px 16px rgba(104, 78, 63, 0.05);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #9C897D; text-decoration: none; font-size: 11px; font-weight: 600; transition: 0.2s; position: relative; }
+        .nav-item.active { color: var(--theme-brown); font-weight: 700; }
+        .nav-icon { font-size: 21px; margin-bottom: 2px; }
+        .nav-item.active .nav-icon { transform: translateY(-2px); color: var(--theme-brown); }
+        .nav-item.active::after {
+            content: '';
+            width: 5px; height: 5px;
+            background: var(--theme-brown);
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+
+        .bottom-action-row { display: flex; gap: 12px; width: 100%; }
+        .bottom-action-fixed { width: 100%; }
+        
+        /* Home Screen */
+        .home-header { display: flex; justify-content: space-between; align-items: center; padding: 24px 20px; background: rgba(255, 255, 255, 0.95); border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 12px -2px rgba(104, 78, 63, 0.06); border-bottom: 1px solid #F0DFD7; }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: #F7EFE9; border: 2.5px solid var(--theme-pink); box-shadow: 0 3px 8px rgba(104, 78, 63, 0.1); }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .greeting-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .greeting-name { font-size: 18px; font-weight: 800; color: var(--text-main); }
+        .header-actions { display: flex; gap: 12px; }
+        .action-btn { width: 38px; height: 38px; border-radius: 50%; background: #FFFFFF; border: 1px solid #F0DFD7; display: flex; justify-content: center; align-items: center; font-size: 16px; color: var(--text-main); gap: 4px; box-shadow: 0 2px 6px rgba(104, 78, 63, 0.05); }
+        .section { padding: 20px; }
+        .section-title { font-size: 13px; font-weight: 800; color: var(--text-muted); margin-bottom: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+        
+        .progress-container { margin-bottom: 20px; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .progress-bar-bg { height: 9px; background: #EEDBCE; border-radius: 6px; overflow: hidden; width: 100%; }
+        .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 6px; transition: width 0.5s; }
+        
+        .task-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 14px; font-weight: 600; color: var(--text-main); cursor: pointer; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid #D6C4B6; border-radius: 7px; display: flex; justify-content: center; align-items: center; color: transparent; transition: 0.2s; background: #FFF; }
+        .checkbox.checked { background: var(--primary); border-color: var(--primary); color: #FFFDF8; }
+        
+        .ai-banner { 
+            background: linear-gradient(135deg, #684E3F 0%, #8D5468 50%, #EFA7C3 100%); 
+            border-radius: 22px; 
+            padding: 24px 20px; 
+            color: #FFFDF8; 
+            margin: 0 20px; 
+            display: flex; 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 12px 24px -4px rgba(104, 78, 63, 0.28); 
+        }
+        .ai-banner-content { position: relative; z-index: 2; width: 72%; }
+        .ai-banner-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; line-height: 1.3; }
+        .ai-banner-desc { font-size: 13px; opacity: 0.95; margin-bottom: 16px; line-height: 1.4; }
+        .ai-banner-btn { background: #3E2B20; color: #FFFDF8; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.18); transition: 0.2s; }
+        .ai-banner-btn:hover { background: #533B2E; }
+        
+        .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .game-card { background: #FFFFFF; border-radius: 20px; padding: 20px; text-align: center; border: 1.5px solid #F0DFD7; box-shadow: 0 4px 12px rgba(104, 78, 63, 0.05); }
+        .game-icon { width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 24px; margin: 0 auto 12px; }
+        .game-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+        
+        .search-bar { background: #FFFFFF; padding: 12px 16px; border-radius: 16px; display: flex; align-items: center; gap: 12px; border: 1.5px solid #EBDED3; box-shadow: 0 2px 6px rgba(104, 78, 63, 0.03); }
+        .search-bar input { border: none; outline: none; background: transparent; width: 100%; font-size: 15px; color: var(--text-main); }
+        .search-bar i { color: var(--theme-brown); }
+        
+        .topic-list-item { background: #FFFFFF; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px; border: 1.5px solid #F0DFD7; box-shadow: 0 3px 8px rgba(104, 78, 63, 0.04); }
+        .topic-icon-lg { width: 48px; height: 48px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
+        .topic-info { flex: 1; }
+        .topic-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--text-main); }
+        .topic-stats { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        
+        /* Flashcards */
+        .flashcard-container { display: flex; flex-direction: column; height: 100%; padding-bottom: 20px; }
+        .flashcard-header { display: flex; justify-content: space-between; font-weight: 700; color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+        .flashcard { background: #FFFFFF; border-radius: 26px; flex: 1; padding: 26px; display: flex; flex-direction: column; position: relative; box-shadow: 0 12px 30px -6px rgba(104, 78, 63, 0.09); border: 2px solid #F0DFD7; min-height: 400px; }
+        .fc-top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .fc-badge { background: #FDE8F1; color: #9A4367; border: 1px solid #F6CFDF; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; }
+        .fc-top-right { display: flex; align-items: center; gap: 12px; }
+        .fc-lightbulb-btn { 
+            width: 38px; height: 38px; 
+            border-radius: 50%; 
+            background: #FFF9E6; 
+            border: 1.5px solid #F5DA88; 
+            color: #D48806; 
+            display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; 
+            font-size: 17px; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 2px 6px rgba(212, 136, 6, 0.15); 
+        }
+        .fc-lightbulb-btn:hover, .fc-lightbulb-btn.active { 
+            background: #FFD666; 
+            color: #592400; 
+            transform: scale(1.1); 
+            box-shadow: 0 4px 14px rgba(212, 136, 6, 0.45); 
+            border-color: #FAAD14;
+        }
+        .fc-hint-text-wrapper {
+            animation: fadeInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fc-like { font-size: 24px; color: #D8C6B9; cursor: pointer; transition: 0.2s; }
+        .fc-like:hover { color: #E26588; }
+        .fc-like.text-error { color: #E26588; }
+        .fc-word-container { text-align: center; margin: auto 0; }
+        .fc-word { font-size: 32px; font-weight: 800; color: var(--text-main); display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .fc-ipa { font-size: 18px; color: var(--text-muted); }
+        .fc-bottom-hint { text-align: center; color: var(--text-muted); font-size: 14px; font-weight: 600; margin-top: auto; padding-top: 20px; }
+        
+        .fc-actions { display: flex; gap: 8px; margin-top: 20px; width: 100%; }
+        .fc-level-btn {
+            flex: 1;
+            padding: 10px 4px;
+            font-size: 13.5px;
+            font-weight: 700;
+            border-radius: 14px;
+            background: #FFFFFF;
+            color: var(--theme-brown);
+            border: 2px solid var(--theme-brown);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            box-shadow: 0 2px 6px rgba(104, 78, 63, 0.08);
+        }
+        .fc-level-btn:hover {
+            background: var(--theme-brown);
+            color: #FFFDF8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(104, 78, 63, 0.25);
+        }
+        .fc-level-btn:hover .fc-level-sub { color: #EEDBCE; }
+        .fc-level-btn.active {
+            background: var(--theme-brown);
+            color: #FFFDF8;
+            box-shadow: 0 4px 12px rgba(104, 78, 63, 0.3);
+        }
+        .fc-level-btn.active .fc-level-sub { color: #EEDBCE; }
+        .fc-level-sub {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .fc-extra-actions { margin-top: 20px; text-align: center; }
+        
+        .fc-divider { height: 2px; background: #EEDBCE; margin: 24px auto; width: 60px; border-radius: 2px; }
+        .fc-meaning { font-size: 18px; line-height: 1.5; color: var(--text-main); font-weight: 600; }
+        
+        .ai-input-wrapper { display: flex; gap: 8px; margin-top: 20px;}
+        .ai-input { flex: 1; border: 2px solid #EBDED3; border-radius: 12px; padding: 12px 16px; font-size: 14px; outline: none; background: #FFF; color: var(--text-main); }
+        .ai-input:focus { border-color: var(--primary); }
+        .user-sentence { background: #FDFBF8; padding: 16px; border-radius: 16px; border: 1.5px solid #EEDBCE; }
+        .sentence-label { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
+        .sentence-text { font-size: 16px; font-weight: 600; text-decoration: line-through; }
+        .error-box { background: #FFF5F7; border: 1.5px solid #FAD1DE; border-radius: 16px; padding: 16px; margin-top: 16px; }
+        .feedback-status { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .fb-label { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+        .fb-value { font-size: 15px; margin-top: 4px; line-height: 1.4; color: var(--text-main); }
+        .fb-badge { display: inline-block; background: #FCE8F0; color: #C54E60; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; margin-top: 4px; border: 1px solid #F8D2E2; }
+        
+        /* Story */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 14px 16px; background: #FFFFFF; border: 1.5px solid #EBDED3; border-radius: 12px; font-size: 15px; color: var(--text-main); font-weight: 600; outline: none; appearance: none; }
+        .level-selector { display: flex; gap: 10px; }
+        .level-btn { flex: 1; text-align: center; padding: 12px 0; background: #FFFFFF; border: 1.5px solid #EBDED3; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; color: var(--text-main); }
+        .level-btn.active { background: var(--primary); color: #FFFDF8; border-color: var(--primary); box-shadow: 0 4px 12px rgba(104, 78, 63, 0.25); }
+        
+        .ai-loader-wrapper { width: 120px; height: 120px; margin: 60px auto 0; position: relative; display: flex; justify-content: center; align-items: center; }
+        .ai-spinner { position: absolute; width: 100%; height: 100%; border: 4px solid var(--theme-pink); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .ai-icon-center { font-size: 40px; color: var(--primary); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-title { text-align: center; font-size: 24px; font-weight: 800; color: var(--text-main); }
+        .loading-subtitle { text-align: center; font-size: 15px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; }
+        .loading-dots { display: flex; justify-content: center; gap: 6px; }
+        .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        .story-result-card { background: #FFFFFF; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(104, 78, 63, 0.08); border: 2px solid #F0DFD7; }
+        .story-meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px; }
+        .meta-tag { background: #F7EFE9; color: var(--text-main); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid #EEDBCE; }
+        .story-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 20px; }
+        .story-content { font-size: 15px; line-height: 1.6; color: var(--text-main); }
+        .story-audio-player { display: flex; align-items: center; gap: 12px; background: #FAF5EE; padding: 12px; border-radius: 16px; border: 1.5px solid #EEDBCE; margin-top: 20px;}
+        .btn-circle-play { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #FFFDF8; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(104, 78, 63, 0.25); }
+        .audio-wave { flex: 1; display: flex; align-items: center; gap: 4px; height: 30px; }
+        .bar { width: 4px; background: var(--primary); border-radius: 2px; opacity: 0.6; }
+        .h-10 { height: 10px; } .h-15 { height: 15px; } .h-20 { height: 20px; } .h-25 { height: 25px; } .h-30 { height: 30px; }
+        .audio-time { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+
+        /* Story Questions */
+        .question-card { background: #FFFFFF; border-radius: 20px; padding: 20px; border: 1.5px solid #F0DFD7; box-shadow: 0 4px 10px rgba(104, 78, 63, 0.04); margin-bottom: 20px; }
+        .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); }
+        .mcq-option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid #EEDBCE; border-radius: 14px; margin-bottom: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; background: #FFFFFF; color: var(--text-main); }
+        .mcq-option.selected { border-color: var(--primary); background: #FAF2EE; color: var(--primary); font-weight: 700; }
+        .mcq-letter { width: 28px; height: 28px; border-radius: 50%; background: #F7EFE9; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 800; color: var(--text-muted); transition: 0.2s; }
+        .mcq-option.selected .mcq-letter { background: var(--primary); color: #FFFDF8; }
+
+        /* Dictation */
+        .audio-player-lg { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+        .btn-play-lg { width: 72px; height: 72px; border-radius: 50%; background: var(--primary); color: #FFFDF8; border: 3px solid #FFF; font-size: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; padding-left: 6px; box-shadow: 0 8px 20px rgba(104, 78, 63, 0.4); }
+        .audio-timer { font-size: 14px; font-weight: 800; color: var(--text-main); }
+        .audio-repeat { width: 38px; height: 38px; border-radius: 50%; background: #FFFFFF; color: var(--text-muted); border: 1.5px solid #EEDBCE; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 6px rgba(104, 78, 63, 0.05); }
+        .dictation-input { width: 100%; border: none; border-bottom: 2.5px solid #D6C4B6; padding: 16px 0; font-size: 24px; text-align: center; font-weight: 800; color: var(--text-main); outline: none; background: transparent; }
+        .dictation-input:focus { border-color: var(--primary); }
+        .input-success { border-color: var(--green) !important; color: var(--green); }
+        .input-error { border-color: var(--red) !important; color: var(--red); }
+        
+        .feedback-card { padding: 20px; border-radius: 18px; border-width: 2px; border-style: solid; margin-top: 20px; }
+        .success-card { background: #F4FAF6; border-color: #BBE3CC; }
+        .error-card { background: #FFF5F7; border-color: #F8CAD8; }
+        .fc-title { font-weight: 800; font-size: 16px; }
+        .success-card .fc-title { color: var(--green); } .error-card .fc-title { color: var(--red); }
+        .fc-desc { font-size: 15px; line-height: 1.5; color: var(--text-main); margin-top: 10px;}
+        
+        /* Sentence Ordering */
+        .q-label { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .q-instruction { font-size: 14px; color: var(--text-muted); line-height: 1.4; }
+        .sentence-builder { display: flex; flex-wrap: wrap; gap: 8px; min-height: 60px; padding-bottom: 20px; border-bottom: 2px dashed #D6C4B6; margin-bottom: 40px; }
+        .word-slot { height: 44px; min-width: 60px; border-radius: 12px; display: flex; justify-content: center; align-items: center; padding: 0 16px; font-size: 16px; font-weight: 700; }
+        .word-slot.active { background: #F7EFE9; border: 2px dashed #C8B5A6; }
+        .word-slot.filled { background: #FFFFFF; border: 1.5px solid #D6C4B6; color: var(--text-main); box-shadow: 0 2px 6px rgba(104, 78, 63, 0.05); }
+        .word-slot.filled.success { background: var(--green); color: #FFFDF8; border-color: var(--green); box-shadow: none; }
+        .word-slot.filled.error { background: var(--red); color: #FFFDF8; border-color: var(--red); box-shadow: none; }
+        
+        .word-bank-container { margin-top: 20px; }
+        .word-bank-label { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; }
+        .word-bank { display: flex; flex-wrap: wrap; gap: 12px; }
+        .word-btn { background: #FFFFFF; border: 1.5px solid #D6C4B6; color: var(--text-main); height: 44px; padding: 0 16px; border-radius: 12px; font-size: 16px; font-weight: 700; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(104, 78, 63, 0.05); cursor: pointer; }
+        .word-btn.empty { background: #F7EFE9; color: transparent; border: 1px dashed #D6C4B6; box-shadow: none; pointer-events: none; }
+        
+        .feedback-banner { margin-top: 20px; padding: 16px; border-radius: 16px; }
+        .banner-success { background: var(--green); color: white; }
+        .banner-error { background: var(--red); color: white; }
+        .banner-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+        .banner-desc { font-size: 15px; font-weight: 500; opacity: 0.95; }
+
+        /* Matching Game */
+        .bg-game { background: var(--theme-rosegold-grad) !important; }
+        .timer-banner { background: #FFFFFF; padding: 8px 18px; border-radius: 20px; font-weight: 800; font-size: 18px; color: var(--theme-brown); display: inline-flex; align-items: center; gap: 8px; margin: 0 auto 20px 50%; transform: translateX(-50%); box-shadow: 0 4px 10px rgba(104, 78, 63, 0.08); border: 1.5px solid #EEDBCE; }
+        .match-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .match-card { background: #FFFFFF; border-radius: 16px; height: 80px; display: flex; justify-content: center; align-items: center; font-size: 15px; font-weight: 700; color: var(--text-main); box-shadow: 0 4px 8px rgba(104, 78, 63, 0.05); border: 2.5px solid #F0DFD7; cursor: pointer; transition: 0.2s; }
+        .match-card:active { transform: scale(0.96); }
+        .match-card.selected { border-color: var(--primary); background: #FAF2EE; color: var(--primary); box-shadow: 0 4px 12px rgba(104, 78, 63, 0.25); }
+        .match-card.matched { border-color: var(--green); background: #F4FAF6; color: var(--green); opacity: 0.6; pointer-events: none; }
+        
+        .result-screen { background: transparent; padding-top: 60px; }
+        .stars-container { display: flex; justify-content: center; gap: 10px; align-items: center; margin-bottom: 20px;}
+        .animate-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .animate-pop:nth-child(2) { animation-delay: 0.1s; } .animate-pop:nth-child(3) { animation-delay: 0.2s; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .result-title { font-size: 36px; font-weight: 800; margin-bottom: 10px;}
+        .result-subtitle { font-size: 16px; font-weight: 600; margin-bottom: 30px;}
+        .stats-box { background: #FAF5EE; border: 1.5px solid #EEDBCE; border-radius: 20px; padding: 20px; width: 85%; margin: 0 auto; }
+        .stat-item { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+        .stat-item:last-child { margin-bottom: 0; }
+
+        /* Pronunciation */
+        .pronounce-word { font-size: 36px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .pronounce-ipa { font-size: 18px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+        .pronounce-meaning { font-size: 18px; color: var(--text-muted); }
+        
+        .mic-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;}
+        .mic-btn-outer { width: 104px; height: 104px; border-radius: 50%; background: #FDE8F1; display: flex; justify-content: center; align-items: center; position: relative; }
+        .mic-btn { width: 72px; height: 72px; border-radius: 50%; background: var(--primary); color: #FFFDF8; border: none; font-size: 28px; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px -3px rgba(104, 78, 63, 0.4); z-index: 2; cursor: pointer; transition: 0.2s; }
+        .mic-btn-outer.recording::before, .mic-btn-outer.recording::after { content: ''; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: var(--theme-pink); animation: ripple 1.5s infinite ease-out; z-index: 1; }
+        .mic-btn-outer.recording::after { animation-delay: 0.75s; }
+        @keyframes ripple { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        .mic-recording { background: var(--red); box-shadow: 0 10px 20px -3px rgba(197, 78, 96, 0.4); }
+        
+        .recording-waves { display: flex; justify-content: center; align-items: center; gap: 8px; height: 60px; margin-bottom: 40px; }
+        .recording-waves .wave { width: 8px; background: var(--primary); border-radius: 4px; animation: wave-anim 1.2s infinite ease-in-out; }
+        .recording-waves .wave:nth-child(1) { height: 20px; animation-delay: 0s; } .recording-waves .wave:nth-child(2) { height: 40px; animation-delay: 0.1s; }
+        .recording-waves .wave:nth-child(3) { height: 60px; animation-delay: 0.2s; } .recording-waves .wave:nth-child(4) { height: 30px; animation-delay: 0.3s; }
+        .recording-waves .wave:nth-child(5) { height: 50px; animation-delay: 0.4s; }
+        @keyframes wave-anim { 0%, 100% { transform: scaleY(0.5); opacity: 0.5; } 50% { transform: scaleY(1); opacity: 1; } }
+        
+        .score-card { background: #FFFFFF; border: 2px solid #EEDBCE; border-radius: 22px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(104, 78, 63, 0.08); margin-top: 30px;}
+        .score-title { font-size: 18px; font-weight: 800; color: var(--text-main); }
+        .score-breakdown { display: flex; justify-content: space-around; padding: 12px; background: #FAF5EE; border-radius: 14px; margin-top: 15px;}
+        .sb-item { font-weight: 800; font-size: 14px; text-transform: uppercase; }
+        .score-tip { text-align: left; margin-top: 20px; background: #FFF8E7; border: 1px solid #F5E1AA; padding: 15px; border-radius: 14px; font-size: 14px; color: var(--text-main); }
+
+        /* Review Modes */
+        .review-mode-card { display: flex; align-items: center; gap: 16px; padding: 20px; border-radius: 20px; margin-bottom: 16px; background: #FFFFFF; border: 1.5px solid #F0DFD7; box-shadow: 0 4px 10px rgba(104, 78, 63, 0.04); cursor: pointer; transition: 0.2s; }
+        .review-mode-card:active { transform: scale(0.98); }
+        .review-mode-card.easy { border-left: 6px solid var(--green); }
+        .review-mode-card.medium { border-left: 6px solid var(--orange); }
+        .review-mode-card.hard { border-left: 6px solid var(--red); }
+        .review-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
+        .review-info h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+        .review-info p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        
+        .word-list-item { background: #FFFFFF; padding: 16px; border-radius: 18px; margin-bottom: 12px; border: 1.5px solid #F0DFD7; box-shadow: 0 2px 6px rgba(104, 78, 63, 0.03); }
+        
+        /* Subscriptions */
+        .subs-container { background: var(--theme-rosegold-grad); }
+        .subs-header { font-size: 28px; font-weight: 800; color: var(--text-main); margin-bottom: 20px; }
+        .subs-subheader { font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; }
+        .plan-card { background: #FFFFFF; border-radius: 24px; border: 2px solid #F0DFD7; padding: 24px; margin-bottom: 24px; position: relative; box-shadow: 0 6px 18px rgba(104, 78, 63, 0.05); }
+        .plan-card.recommended { border-color: transparent; }
+        .plan-card.recommended::before { content: ""; position: absolute; inset: 0; border-radius: 24px; padding: 3px; background: linear-gradient(135deg, var(--theme-brown), var(--theme-pink), var(--theme-cream)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .plan-badge { background: linear-gradient(135deg, var(--theme-brown) 0%, #9B5570 100%); color: #FFFDF8; padding: 8px 16px; border-top-left-radius: 20px; border-top-right-radius: 20px; position: absolute; top: 0; left: 0; right: 0; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .plan-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 20px; }
+        .plan-card.recommended .plan-title { margin-top: 24px; }
+        .plan-feature { display: flex; gap: 12px; margin-bottom: 16px; font-size: 15px; color: var(--text-main); font-weight: 600; align-items: flex-start; }
+        .plan-feature i { color: var(--theme-brown); font-size: 16px; margin-top: 2px; }
+        .plan-btn { width: 100%; background: var(--primary); color: #FFFDF8; border: none; padding: 16px; border-radius: 16px; font-weight: 800; font-size: 15px; margin-top: 10px; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 16px rgba(104, 78, 63, 0.3); }
+        .plan-btn:hover { background: var(--theme-brown-hover); }
+        .plan-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="gallery-title">Language Learning App UI Mockups</div>
+    <div class="gallery" id="gallery">
+    </div>
+
+    <!-- Script to generate screens -->
+    <script>
+        window.toggleHint = function(btn) {
+            const card = btn.closest('.flashcard');
+            if (!card) return;
+            const hintWrapper = card.querySelector('.fc-hint-text-wrapper');
+            const lightbulb = card.querySelector('.fc-lightbulb-btn');
+            if (hintWrapper) {
+                const isHidden = hintWrapper.style.display === 'none' || getComputedStyle(hintWrapper).display === 'none';
+                hintWrapper.style.display = isHidden ? 'block' : 'none';
+                if (lightbulb) lightbulb.classList.toggle('active', isHidden);
+            }
+        };
+
+        const renderNav = (active) => `
+            <nav class="bottom-nav">
+                <a href="#" class="nav-item ${active === 'home' ? 'active' : ''}"><i class="fa-solid fa-house nav-icon"></i><span>Home</span></a>
+                <a href="#" class="nav-item ${active === 'flashcard' ? 'active' : ''}"><i class="fa-solid fa-clone nav-icon"></i><span>FlashCard</span></a>
+                <a href="#" class="nav-item ${active === 'premium' ? 'active' : ''}"><i class="fa-solid fa-crown nav-icon"></i><span>Gói cước</span></a>
+                <a href="#" class="nav-item ${active === 'pronunciation' ? 'active' : ''}"><i class="fa-solid fa-microphone nav-icon"></i><span>Pronunciation</span></a>
+                <a href="#" class="nav-item ${active === 'listening' ? 'active' : ''}"><i class="fa-solid fa-headphones nav-icon"></i><span>Listening</span></a>
+            </nav>
+        `;
+
+        const statusBar = `
+            <div class="status-bar">
+                <span>09:52</span>
+                <div class="status-icons">
+                    <i class="fa-solid fa-signal"></i><i class="fa-solid fa-wifi"></i><i class="fa-solid fa-battery-full"></i>
+                </div>
+            </div>
+        `;
+
+        const topBar = (title) => `
+            <div class="top-bar">
+                <i class="fa-solid fa-chevron-left back-btn"></i>
+                <div class="title">${title}</div>
+                <i class="fa-solid fa-ellipsis"></i>
+            </div>
+        `;
+
+        const createScreen = (content, config = {}) => {
+            const { nav = '', header = '', bgColor = '' } = config;
+            return `
+                <div class="mobile-container">
+                    ${statusBar}
+                    ${header ? topBar(header) : ''}
+                    <div class="mobile-content ${bgColor}" style="padding-bottom: ${nav ? '80px' : '20px'}">
+                        ${content}
+                    </div>
+                    ${nav ? renderNav(nav) : ''}
+                </div>
+            `;
+        };
+
+        const screens = [
+            // 1. Home (Updated with Ôn Tập)
+            createScreen(`
+                <header class="home-header">
+                    <div class="user-info">
+                        <div class="avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar"></div>
+                        <div class="greeting">
+                            <div class="greeting-sub">Chào buổi sáng,</div>
+                            <div class="greeting-name">Nguyễn Văn A!</div>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <div class="action-btn"><i class="fa-solid fa-fire" style="color: #f97316;"></i> <span style="font-size:14px; font-weight:700;">12</span></div>
+                        <div class="action-btn"><i class="fa-solid fa-bell"></i></div>
+                    </div>
+                </header>
+                <div class="section">
+                    <div class="section-title">NHIỆM VỤ HỌC TẬP HÔM NAY</div>
+                    <div class="glass-card p-20">
+                        <div class="progress-container">
+                            <div class="progress-info"><span class="progress-text">Tiến độ</span><span class="progress-percent">50%</span></div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 50%;"></div></div>
+                        </div>
+                        <label class="task-item"><div class="checkbox checked"><i class="fa-solid fa-check"></i></div><span>Hoàn thành 10 Flashcard chủ đề Travel</span></label>
+                        <label class="task-item"><div class="checkbox"></div><span>Đạt 80 điểm Luyện phát âm (0/1)</span></label>
+                    </div>
+                </div>
+                <div class="ai-banner">
+                    <div class="ai-banner-content">
+                        <div class="ai-banner-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Truyện tạo bằng AI: A Day at the Airport</div>
+                        <div class="ai-banner-desc">Ôn tập 5 từ vựng bạn hay quên nhất qua ngữ cảnh!</div>
+                        <button class="ai-banner-btn">Đọc và Nghe ngay</button>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">TRUNG TÂM LUYỆN TẬP</div>
+                    <div class="games-grid">
+                        <div class="game-card"><div class="game-icon bg-orange"><i class="fa-solid fa-puzzle-piece"></i></div><div class="game-title">Game Ghép Từ</div></div>
+                        <div class="game-card"><div class="game-icon bg-green"><i class="fa-solid fa-book-open"></i></div><div class="game-title">Ôn Tập</div></div>
+                        <div class="game-card"><div class="game-icon bg-blue"><i class="fa-solid fa-headphones"></i></div><div class="game-title">Nghe Chép Chính Tả</div></div>
+                        <div class="game-card"><div class="game-icon bg-red"><i class="fa-solid fa-arrow-down-a-z"></i></div><div class="game-title">Sắp Xếp Câu</div></div>
+                    </div>
+                </div>
+            `, { nav: 'home' }),
+
+            // 2. Flashcard Topics
+            createScreen(`
+                <div class="p-20">
+                    <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Tìm kiếm chủ đề..."></div>
+                    <div class="mt-20">
+                        <div class="topic-list-item">
+                            <div class="topic-icon-lg bg-pink"><i class="fa-solid fa-paw"></i></div>
+                            <div class="topic-info"><div class="topic-name">Animals</div><div class="topic-stats">learned: 45/50</div><div class="progress-bar-bg mt-5"><div class="progress-bar-fill" style="width: 90%; background: var(--theme-pink)"></div></div></div>
+                            <i class="fa-solid fa-chevron-right text-muted"></i>
+                        </div>
+                        <div class="topic-list-item">
+                            <div class="topic-icon-lg bg-brown"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="topic-info"><div class="topic-name">Education</div><div class="topic-stats">learned: 12/25</div><div class="progress-bar-bg mt-5"><div class="progress-bar-fill" style="width: 48%; background: var(--theme-brown)"></div></div></div>
+                            <i class="fa-solid fa-chevron-right text-muted"></i>
+                        </div>
+                        <div class="topic-list-item">
+                            <div class="topic-icon-lg bg-cream"><i class="fa-solid fa-briefcase"></i></div>
+                            <div class="topic-info"><div class="topic-name">Business</div><div class="topic-stats">learned: 47/50</div><div class="progress-bar-bg mt-5"><div class="progress-bar-fill" style="width: 94%; background: var(--theme-cream-dark)"></div></div></div>
+                            <i class="fa-solid fa-chevron-right text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            `, { nav: 'flashcard', header: 'Flashcard' }),
+
+            // 3. Flashcard Detail - Front (Trước khi bấm icon gợi ý)
+            createScreen(`
+                <div class="p-20 flashcard-container">
+                    <div class="flashcard-header"><div class="fc-subtitle">BUSINESS</div><div class="fc-counter">5 / 20</div></div>
+                    <div class="flashcard card-front">
+                        <div class="fc-top-actions">
+                            <div class="fc-badge">Từ vựng mới</div>
+                            <div class="fc-top-right">
+                                <button class="fc-lightbulb-btn" onclick="toggleHint(this)" title="Bấm để xem gợi ý"><i class="fa-solid fa-lightbulb"></i></button>
+                                <i class="fa-regular fa-heart fc-like"></i>
+                            </div>
+                        </div>
+                        <div class="fc-word-container">
+                            <div class="fc-word">Revenue <i class="fa-solid fa-volume-high text-primary" style="font-size: 24px;"></i></div>
+                            <div class="fc-ipa">/ˈrev.ə.nuː/</div>
+                            <div class="fc-hint-text-wrapper" style="display: none;">
+                                <div class="fc-divider"></div>
+                                <div class="fc-meaning">money that a business receives from selling goods or services</div>
+                            </div>
+                        </div>
+                        <div class="fc-bottom-hint"><i class="fa-solid fa-hand-pointer"></i> Chạm để lật thẻ</div>
+                    </div>
+                    <div class="fc-actions opacity-50" style="pointer-events: none;">
+                        <button class="fc-level-btn easy"><span>Dễ</span><span class="fc-level-sub">4 ngày</span></button>
+                        <button class="fc-level-btn medium"><span>Vừa</span><span class="fc-level-sub">2 ngày</span></button>
+                        <button class="fc-level-btn hard"><span>Khó</span><span class="fc-level-sub">1 ngày</span></button>
+                    </div>
+                </div>
+            `, { header: 'Flashcard' }),
+
+            // 3b. NEW: Flashcard Detail - Front (Sau khi ấn icon gợi ý)
+            createScreen(`
+                <div class="p-20 flashcard-container">
+                    <div class="flashcard-header"><div class="fc-subtitle">BUSINESS</div><div class="fc-counter">5 / 20</div></div>
+                    <div class="flashcard card-front">
+                        <div class="fc-top-actions">
+                            <div class="fc-badge">Từ vựng mới</div>
+                            <div class="fc-top-right">
+                                <button class="fc-lightbulb-btn active" onclick="toggleHint(this)" title="Đang hiển thị gợi ý"><i class="fa-solid fa-lightbulb"></i></button>
+                                <i class="fa-regular fa-heart fc-like"></i>
+                            </div>
+                        </div>
+                        <div class="fc-word-container">
+                            <div class="fc-word">Revenue <i class="fa-solid fa-volume-high text-primary" style="font-size: 24px;"></i></div>
+                            <div class="fc-ipa">/ˈrev.ə.nuː/</div>
+                            <div class="fc-hint-text-wrapper" style="display: block;">
+                                <div class="fc-divider"></div>
+                                <div class="fc-meaning">money that a business receives from selling goods or services</div>
+                            </div>
+                        </div>
+                        <div class="fc-bottom-hint"><i class="fa-solid fa-hand-pointer"></i> Chạm để lật thẻ</div>
+                    </div>
+                    <div class="fc-actions opacity-50" style="pointer-events: none;">
+                        <button class="fc-level-btn easy"><span>Dễ</span><span class="fc-level-sub">4 ngày</span></button>
+                        <button class="fc-level-btn medium"><span>Vừa</span><span class="fc-level-sub">2 ngày</span></button>
+                        <button class="fc-level-btn hard"><span>Khó</span><span class="fc-level-sub">1 ngày</span></button>
+                    </div>
+                </div>
+            `, { header: 'Flashcard (Gợi ý)' }),
+
+            // 4. Flashcard Detail - Back English
+            createScreen(`
+                <div class="p-20 flashcard-container">
+                    <div class="flashcard-header"><div class="fc-subtitle">BUSINESS</div><div class="fc-counter">5 / 20</div></div>
+                    <div class="flashcard card-back">
+                        <div class="fc-top-actions">
+                            <div class="fc-badge">Từ vựng mới</div>
+                            <div class="fc-top-right">
+                                <button class="fc-lightbulb-btn" onclick="toggleHint(this)" title="Gợi ý"><i class="fa-solid fa-lightbulb"></i></button>
+                                <i class="fa-solid fa-heart fc-like text-error"></i>
+                            </div>
+                        </div>
+                        <div class="fc-word-container">
+                            <div class="fc-word">Revenue <i class="fa-solid fa-volume-high text-primary" style="font-size: 24px;"></i></div>
+                            <div class="fc-ipa">/ˈrev.ə.nuː/</div>
+                            <div class="fc-divider"></div>
+                            <div class="fc-meaning">money that a business receives from selling goods or services</div>
+                        </div>
+                    </div>
+                    <div class="fc-actions">
+                        <button class="fc-level-btn easy"><span>Dễ</span><span class="fc-level-sub">4 ngày</span></button>
+                        <button class="fc-level-btn medium active"><span>Vừa</span><span class="fc-level-sub">2 ngày</span></button>
+                        <button class="fc-level-btn hard"><span>Khó</span><span class="fc-level-sub">1 ngày</span></button>
+                    </div>
+                    <div class="fc-extra-actions"><button class="btn-text"><i class="fa-solid fa-pen"></i> Viết ví dụ của bạn</button></div>
+                </div>
+            `, { header: 'Flashcard' }),
+
+            // 5. Flashcard Detail - Back Vietnamese
+            createScreen(`
+                <div class="p-20 flashcard-container">
+                    <div class="flashcard-header"><div class="fc-subtitle">BUSINESS</div><div class="fc-counter">5 / 20</div></div>
+                    <div class="flashcard card-back">
+                        <div class="fc-top-actions">
+                            <div class="fc-badge">Từ vựng mới</div>
+                            <div class="fc-top-right">
+                                <button class="fc-lightbulb-btn" onclick="toggleHint(this)" title="Gợi ý"><i class="fa-solid fa-lightbulb"></i></button>
+                                <i class="fa-solid fa-heart fc-like text-error"></i>
+                            </div>
+                        </div>
+                        <div class="fc-word-container">
+                            <div class="fc-word text-gradient">doanh thu <i class="fa-solid fa-volume-high text-primary" style="font-size: 24px;"></i></div>
+                            <div class="fc-divider"></div>
+                            <div class="fc-meaning">money that a business receives from selling goods or services</div>
+                        </div>
+                    </div>
+                    <div class="fc-actions">
+                        <button class="fc-level-btn easy"><span>Dễ</span><span class="fc-level-sub">4 ngày</span></button>
+                        <button class="fc-level-btn medium"><span>Vừa</span><span class="fc-level-sub">2 ngày</span></button>
+                        <button class="fc-level-btn hard active"><span>Khó</span><span class="fc-level-sub">1 ngày</span></button>
+                    </div>
+                </div>
+            `, { header: 'Flashcard' }),
+            
+            // 6. Flashcard - AI Check button
+            createScreen(`
+                <div class="p-20 flashcard-container">
+                    <div class="flashcard-header"><div class="fc-subtitle">BUSINESS</div><div class="fc-counter">5 / 20</div></div>
+                    <div class="flashcard card-back">
+                        <div class="fc-top-actions">
+                            <div class="fc-badge">Từ vựng mới</div>
+                            <div class="fc-top-right">
+                                <button class="fc-lightbulb-btn" onclick="toggleHint(this)" title="Gợi ý"><i class="fa-solid fa-lightbulb"></i></button>
+                                <i class="fa-solid fa-heart fc-like text-error"></i>
+                            </div>
+                        </div>
+                        <div class="fc-word-container">
+                            <div class="fc-word">Revenue <i class="fa-solid fa-volume-high text-primary" style="font-size: 24px;"></i></div>
+                            <div class="fc-ipa">/ˈrev.ə.nuː/</div>
+                            <div class="fc-divider"></div>
+                            <div class="fc-meaning">money that a business receives from selling goods or services</div>
+                        </div>
+                    </div>
+                    <div class="fc-actions">
+                        <button class="fc-level-btn easy"><span>Dễ</span><span class="fc-level-sub">4 ngày</span></button>
+                        <button class="fc-level-btn medium"><span>Vừa</span><span class="fc-level-sub">2 ngày</span></button>
+                        <button class="fc-level-btn hard"><span>Khó</span><span class="fc-level-sub">1 ngày</span></button>
+                    </div>
+                    <div class="ai-input-wrapper mt-20">
+                        <input type="text" value="Company's revenue rise last year." class="ai-input">
+                        <button class="btn-primary btn-sm"><i class="fa-solid fa-wand-magic-sparkles"></i> Check</button>
+                    </div>
+                </div>
+            `, { header: 'Flashcard' }),
+
+            // 7. Flashcard - AI Error Check
+            createScreen(`
+                <div class="p-20 flashcard-container">
+                    <div class="flashcard-header"><div class="fc-subtitle">BUSINESS</div><div class="fc-counter">5 / 20</div></div>
+                    <div class="flashcard">
+                        <div class="fc-word" style="font-size: 24px; margin-bottom: 16px;">Revenue</div>
+                        <div class="user-sentence mb-10">
+                            <div class="sentence-label">Câu của bạn:</div>
+                            <div class="sentence-text text-error">Company's revenue rise last year.</div>
+                        </div>
+                        <div class="error-box">
+                            <div class="feedback-status text-error"><i class="fa-solid fa-circle-xmark"></i> INCORRECT</div>
+                            <div class="mt-10"><div class="fb-label">Suggested Correction:</div><div class="fb-value text-success font-bold">Company's revenue rose last year.</div></div>
+                            <div class="mt-10"><div class="fb-label">Explanation:</div><div class="fb-value">"last year" mô tả quá khứ, đổi "rise" thành "rose".</div></div>
+                            <div class="mt-10"><div class="fb-label">Error Type:</div><div class="fb-badge">Grammar</div></div>
+                        </div>
+                    </div>
+                    <div class="bottom-action-fixed mt-20"><button class="btn-primary w-full">Try Again</button></div>
+                </div>
+            `, { header: 'Flashcard' }),
+
+            // 8. AI Learning Story Form
+            createScreen(`
+                <div class="p-20">
+                    <div class="glass-card p-20">
+                        <div class="text-center text-primary font-bold mb-20 text-2xl"><i class="fa-solid fa-wand-magic-sparkles"></i> Create Story</div>
+                        <div class="form-group"><label>Chủ đề</label><select class="form-control"><option>Animals</option></select></div>
+                        <div class="form-group">
+                            <label>Level</label>
+                            <div class="level-selector">
+                                <div class="level-btn">A1</div><div class="level-btn active">A2</div><div class="level-btn">B1</div><div class="level-btn">B2</div>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Story Style</label><select class="form-control"><option>Hài hước</option></select></div>
+                        <div class="form-group"><label>Độ dài câu truyện</label><select class="form-control"><option>Ngắn (100 từ)</option></select></div>
+                        <button class="ai-glow-btn w-full mt-20"><i class="fa-solid fa-pen-nib"></i> Tạo Câu Chuyện</button>
+                    </div>
+                </div>
+            `, { nav: 'listening', header: 'AI Learning Story' }),
+
+            // 9. AI Learning Story Loading
+            createScreen(`
+                <div class="p-20 h-full flex-col">
+                    <div class="ai-loader-wrapper">
+                        <div class="ai-spinner"></div>
+                        <i class="fa-solid fa-wand-magic-sparkles ai-icon-center text-primary"></i>
+                    </div>
+                    <div class="loading-title mt-40">Create your Story...</div>
+                    <div class="loading-subtitle">AI is preparing a funny Animals story for you.</div>
+                    <div class="loading-dots mt-20">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    </div>
+                </div>
+            `, { header: 'AI Learning Story' }),
+
+            // 10. AI Learning Story Result (Updated with Translation & Explore button)
+            createScreen(`
+                <div class="p-20">
+                    <div class="story-result-card">
+                        <div class="story-meta">
+                            <div class="meta-tag"><i class="fa-solid fa-paw"></i> Animals</div>
+                            <div class="meta-tag"><i class="fa-solid fa-layer-group"></i> A2</div>
+                            <div class="meta-tag"><i class="fa-solid fa-face-laugh-squint"></i> Hài hước</div>
+                        </div>
+                        <h2 class="story-title text-gradient">The Funny Parrot</h2>
+                        <div class="story-content">
+                            Tom has a funny <b>PARROT</b> named Max. Max likes to imitate people. Every morning, he says, "Good morning!" to Tom's dog. One day, Max flew into the kitchen. He saw a <b>BANANA</b> and tried to eat it. But the banana was too big! Tom laughed and said, "You are a very funny parrot!"
+                        </div>
+                        <div class="story-content mt-15 pt-15 border-t text-muted text-sm">
+                            <i>Tom có một chú <b>VẸT</b> vui nhộn tên là Max. Max thích bắt chước mọi người. Mỗi sáng, cậu đều nói "Chào buổi sáng!" với chú chó của Tom. Một ngày nọ, Max bay vào bếp. Cậu thấy một quả <b>CHUỐI</b> và cố ăn nó. Nhưng quả chuối quá to! Tom cười và nói, "Mày đúng là một chú vẹt buồn cười!"</i>
+                        </div>
+                        <div class="story-audio-player">
+                            <button class="btn-circle-play"><i class="fa-solid fa-play"></i></button>
+                            <div class="audio-wave">
+                                <div class="bar h-10"></div><div class="bar h-20"></div><div class="bar h-15"></div><div class="bar h-30"></div><div class="bar h-10"></div>
+                                <div class="bar h-25"></div><div class="bar h-15"></div><div class="bar h-10"></div><div class="bar h-20"></div><div class="bar h-10"></div>
+                            </div>
+                            <div class="audio-time">0:00 / 0:45</div>
+                        </div>
+                    </div>
+                    <div class="bottom-action-row mt-20">
+                        <button class="btn-outline flex-1">Làm lại</button>
+                        <button class="btn-primary flex-1"><i class="fa-solid fa-clipboard-question"></i> Tìm hiểu</button>
+                    </div>
+                </div>
+            `, { header: 'AI Learning Story' }),
+
+            // 11. NEW: Story Questions (Tìm hiểu câu chuyện)
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="progress-bar-bg mb-20"><div class="progress-bar-fill" style="width: 50%;"></div></div>
+                    
+                    <div class="question-card">
+                        <div class="question-title">1. What did Max try to eat in the kitchen?</div>
+                        <div class="mcq-option"><div class="mcq-letter">A</div> An apple</div>
+                        <div class="mcq-option selected"><div class="mcq-letter">B</div> A banana</div>
+                        <div class="mcq-option"><div class="mcq-letter">C</div> A bone</div>
+                    </div>
+                    
+                    <div class="question-card">
+                        <div class="question-title">2. Tóm tắt câu chuyện (Summary)</div>
+                        <textarea class="form-control" rows="3" placeholder="Viết tóm tắt nội dung bằng tiếng Anh vào đây..." style="resize:none; padding:12px;"></textarea>
+                    </div>
+                    
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-fixed"><button class="btn-primary w-full shadow-glow">Kiểm tra kết quả <i class="fa-solid fa-arrow-right ml-5"></i></button></div>
+                </div>
+            `, { header: 'Tìm hiểu câu chuyện' }),
+
+            // 12. Dictation Topics
+            createScreen(`
+                <div class="p-20">
+                    <div class="font-bold text-muted mb-20 text-sm">Choose a topic to practice</div>
+                    <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Tìm kiếm chủ đề..."></div>
+                    <div class="mt-20">
+                        <div class="topic-list-item">
+                            <div class="topic-icon-lg bg-pink"><i class="fa-solid fa-paw"></i></div>
+                            <div class="topic-info"><div class="topic-name">Animals</div><div class="topic-stats">10 words remaining</div>
+                            <div class="progress-bar-bg mt-5"><div class="progress-bar-fill" style="width: 20%; background: var(--theme-pink)"></div></div></div>
+                        </div>
+                        <div class="topic-list-item">
+                            <div class="topic-icon-lg bg-brown"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="topic-info"><div class="topic-name">Education</div><div class="topic-stats">13 words remaining</div>
+                            <div class="progress-bar-bg mt-5"><div class="progress-bar-fill" style="width: 32%; background: var(--theme-brown)"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            `, { nav: 'listening', header: 'Dictation' }),
+
+            // 13. Dictation Playing
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="flex-between mb-40 text-muted font-bold text-sm"><span>ANIMAL</span><span>5 / 20</span></div>
+                    <div class="audio-player-lg mb-40">
+                        <button class="btn-play-lg"><i class="fa-solid fa-play"></i></button>
+                        <div class="audio-timer">0:05</div>
+                        <div class="audio-repeat"><i class="fa-solid fa-rotate-right"></i></div>
+                    </div>
+                    <div class="text-center mb-20 font-medium">Listen and type the word you hear.</div>
+                    <input type="text" class="dictation-input" placeholder="Type the word...">
+                    <div class="mt-10 text-muted text-sm text-center">Hint: 2 âm tiết (nghĩa: con voi)</div>
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-row"><button class="btn-text text-muted flex-1 text-left">Bỏ qua (Skip)</button><button class="btn-primary flex-1 opacity-50" disabled>Check Answer</button></div>
+                </div>
+            `, { header: 'Dictation' }),
+
+            // 14. Dictation Typing
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="flex-between mb-40 text-muted font-bold text-sm"><span>ANIMAL</span><span>5 / 20</span></div>
+                    <div class="audio-player-lg mb-40">
+                        <button class="btn-play-lg"><i class="fa-solid fa-play"></i></button>
+                        <div class="audio-timer">0:05</div>
+                        <div class="audio-repeat"><i class="fa-solid fa-rotate-right"></i></div>
+                    </div>
+                    <div class="text-center mb-20 font-medium">Listen and type the word you hear.</div>
+                    <input type="text" class="dictation-input" value="e---ha--">
+                    <div class="mt-10 text-muted text-sm text-center">Hint: 2 âm tiết (nghĩa: con voi)</div>
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-row"><button class="btn-text text-muted flex-1 text-left">Bỏ qua (Skip)</button><button class="btn-primary flex-1">Check Answer</button></div>
+                </div>
+            `, { header: 'Dictation' }),
+
+            // 15. Dictation Correct
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="flex-between mb-20 text-muted font-bold text-sm"><span>ANIMAL</span><span>5 / 20</span></div>
+                    <div class="audio-player-lg mb-20">
+                        <button class="btn-play-lg"><i class="fa-solid fa-play"></i></button>
+                        <div class="audio-timer">0:05</div>
+                        <div class="audio-repeat"><i class="fa-solid fa-rotate-right"></i></div>
+                    </div>
+                    <div class="text-center mb-20 font-medium">Listen and type the word you hear.</div>
+                    <input type="text" class="dictation-input input-success" value="elephant" readonly>
+                    <div class="feedback-card success-card">
+                        <div class="fc-title"><i class="fa-solid fa-circle-check"></i> CORRECT</div>
+                        <div class="fc-desc"><strong>Elephant</strong> /ˈel.ɪ.fənt/ <br>Nghĩa: Con voi <br>Ví dụ: The elephant is eating leaves.</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-fixed"><button class="btn-primary w-full">Continue</button></div>
+                </div>
+            `, { header: 'Dictation' }),
+
+            // 16. Dictation Incorrect
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="flex-between mb-20 text-muted font-bold text-sm"><span>ANIMAL</span><span>5 / 20</span></div>
+                    <div class="audio-player-lg mb-20">
+                        <button class="btn-play-lg"><i class="fa-solid fa-play"></i></button>
+                        <div class="audio-timer">0:05</div>
+                        <div class="audio-repeat"><i class="fa-solid fa-rotate-right"></i></div>
+                    </div>
+                    <div class="text-center mb-20 font-medium">Listen and type the word you hear.</div>
+                    <input type="text" class="dictation-input input-error" value="elefant">
+                    <div class="feedback-card error-card">
+                        <div class="fc-title"><i class="fa-solid fa-circle-xmark"></i> INCORRECT</div>
+                        <div class="fc-desc">Đáp án đúng: <strong>Elephant</strong> /ˈel.ɪ.fənt/</div>
+                        <div class="mt-10 text-sm text-orange font-bold"><i class="fa-solid fa-lightbulb"></i> Từ này đã được thêm vào danh sách ôn tập.</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-row"><button class="btn-outline flex-1">Try again</button><button class="btn-primary flex-1">Continue</button></div>
+                </div>
+            `, { header: 'Dictation' }),
+
+            // 17. Sentence Ordering Practice
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="progress-bar-bg mb-20"><div class="progress-bar-fill" style="width: 30%;"></div></div>
+                    <div class="q-label">Question 3/10</div>
+                    <div class="q-instruction mb-20">Tap the words in the correct order to form a meaningful sentence.</div>
+                    <div class="sentence-builder">
+                        <div class="word-slot filled">The</div>
+                        <div class="word-slot filled">elephant</div>
+                        <div class="word-slot filled">is</div>
+                        <div class="word-slot active"></div>
+                    </div>
+                    <div class="word-bank-container">
+                        <div class="word-bank-label">Word Bank</div>
+                        <div class="word-bank">
+                            <div class="word-btn">leaves</div><div class="word-btn">eating</div>
+                            <div class="word-btn empty">The</div><div class="word-btn empty">is</div><div class="word-btn empty">elephant</div>
+                        </div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-row"><button class="btn-text text-muted flex-1 text-left"><i class="fa-solid fa-rotate-left"></i> Reset</button><button class="btn-primary flex-1">Check Answer</button></div>
+                </div>
+            `, { header: 'Sentence Ordering' }),
+
+            // 18. Sentence Ordering Correct
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="progress-bar-bg mb-20"><div class="progress-bar-fill" style="width: 30%;"></div></div>
+                    <div class="q-label">Question 3/10</div>
+                    <div class="q-instruction mb-20">Tap the words in the correct order to form a meaningful sentence.</div>
+                    <div class="sentence-builder">
+                        <div class="word-slot filled success">The</div><div class="word-slot filled success">elephant</div>
+                        <div class="word-slot filled success">is</div><div class="word-slot filled success">eating</div>
+                        <div class="word-slot filled success">leaves</div>
+                    </div>
+                    <div class="feedback-banner banner-success">
+                        <div class="banner-title"><i class="fa-solid fa-circle-check"></i> CORRECT</div>
+                        <div class="banner-desc">The elephant is eating leaves.</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-fixed"><button class="btn-primary w-full">Next Question <i class="fa-solid fa-arrow-right ml-5"></i></button></div>
+                </div>
+            `, { header: 'Sentence Ordering' }),
+
+            // 19. Matching Start
+            createScreen(`
+                <div class="p-20 flex-col h-full pt-40">
+                    <div class="timer-banner"><i class="fa-regular fa-clock"></i> 00:00</div>
+                    <div class="match-grid">
+                        <div class="match-card">pollution</div><div class="match-card">ô nhiễm</div><div class="match-card">nâu</div>
+                        <div class="match-card">brown</div><div class="match-card">hồng</div><div class="match-card">pink</div>
+                        <div class="match-card">black</div><div class="match-card">đen</div><div class="match-card">tím</div>
+                        <div class="match-card">purple</div><div class="match-card">color</div><div class="match-card">màu sắc</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <button class="btn-primary w-full opacity-50" disabled>Hoàn thành</button>
+                </div>
+            `, { header: 'Ghép thẻ vui', bgColor: 'bg-game' }),
+            
+            // 20. Matching Selecting
+            createScreen(`
+                <div class="p-20 flex-col h-full pt-40">
+                    <div class="timer-banner"><i class="fa-regular fa-clock"></i> 00:05</div>
+                    <div class="match-grid">
+                        <div class="match-card">pollution</div><div class="match-card">ô nhiễm</div><div class="match-card">nâu</div>
+                        <div class="match-card selected">brown</div><div class="match-card selected">hồng</div><div class="match-card">pink</div>
+                        <div class="match-card">black</div><div class="match-card">đen</div><div class="match-card">tím</div>
+                        <div class="match-card">purple</div><div class="match-card">color</div><div class="match-card">màu sắc</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <button class="btn-primary w-full opacity-50" disabled>Hoàn thành</button>
+                </div>
+            `, { header: 'Ghép thẻ vui', bgColor: 'bg-game' }),
+
+            // 21. Matching Done
+            createScreen(`
+                <div class="p-20 flex-col h-full pt-40">
+                    <div class="timer-banner"><i class="fa-regular fa-clock"></i> 00:45</div>
+                    <div class="match-grid">
+                        <div class="match-card matched">pollution</div><div class="match-card matched">ô nhiễm</div><div class="match-card matched">nâu</div>
+                        <div class="match-card matched">brown</div><div class="match-card matched">hồng</div><div class="match-card matched">pink</div>
+                        <div class="match-card matched">black</div><div class="match-card matched">đen</div><div class="match-card matched">tím</div>
+                        <div class="match-card matched">purple</div><div class="match-card matched">color</div><div class="match-card matched">màu sắc</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <button class="btn-primary w-full shadow-glow">Hoàn thành</button>
+                </div>
+            `, { header: 'Ghép thẻ vui', bgColor: 'bg-game' }),
+
+            // 22. Game Over
+            createScreen(`
+                <div class="flex-col h-full result-screen">
+                    <div class="text-center">
+                        <div class="stars-container">
+                            <i class="fa-solid fa-star text-yellow animate-pop" style="font-size:40px"></i>
+                            <i class="fa-solid fa-star text-yellow animate-pop" style="font-size:55px; margin-top:-20px"></i>
+                            <i class="fa-solid fa-star text-yellow animate-pop" style="font-size:40px"></i>
+                        </div>
+                        <h1 class="result-title text-gradient">XUẤT SẮC!</h1>
+                        <p class="result-subtitle text-muted">Bạn đã hoàn thành bài ghép thẻ!</p>
+                        <div class="stats-box text-left">
+                            <div class="stat-item"><i class="fa-regular fa-clock text-blue"></i> Thời gian: 0:45</div>
+                            <div class="stat-item"><i class="fa-solid fa-bullseye text-green"></i> Độ chính xác: 4/4 cặp (100%)</div>
+                            <div class="stat-item"><i class="fa-solid fa-bolt text-orange"></i> Điểm thưởng: +40 XP</div>
+                        </div>
+                    </div>
+                    <div class="bottom-action-fixed mt-auto p-20">
+                        <button class="btn-primary w-full shadow-glow mb-10">Tiếp tục <i class="fa-solid fa-arrow-right ml-5"></i></button>
+                        <button class="btn-outline w-full">Thử lại <i class="fa-solid fa-rotate-right ml-5"></i></button>
+                    </div>
+                </div>
+            `, { nav: 'premium' }),
+
+            // 23. Pronunciation Start
+            createScreen(`
+                <div class="p-20 flex-col h-full text-center">
+                    <div class="mt-40">
+                        <h1 class="pronounce-word">Environment</h1>
+                        <div class="pronounce-ipa">/in'vairomənt/</div>
+                        <div class="pronounce-meaning text-muted">môi trường</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="mic-container">
+                        <div class="mic-btn-outer"><button class="mic-btn"><i class="fa-solid fa-microphone"></i></button></div>
+                        <div class="mt-20 text-muted font-bold">Hãy ấn & nói để luyện phát âm</div>
+                    </div>
+                </div>
+            `, { header: 'Luyện phát âm' }),
+
+            // 24. Pronunciation Recording
+            createScreen(`
+                <div class="p-20 flex-col h-full text-center">
+                    <div class="mt-40">
+                        <h1 class="pronounce-word">Environment</h1>
+                        <div class="pronounce-ipa">/in'vairomənt/</div>
+                        <div class="pronounce-meaning text-muted">môi trường</div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="recording-waves">
+                        <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+                    </div>
+                    <div class="mic-container">
+                        <div class="mic-btn-outer recording"><button class="mic-btn mic-recording"><i class="fa-solid fa-stop"></i></button></div>
+                        <div class="mt-20 text-primary font-bold animate-pulse">Đang lắng nghe bạn nói...</div>
+                    </div>
+                </div>
+            `, { header: 'Luyện phát âm' }),
+
+            // 25. Pronunciation Result
+            createScreen(`
+                <div class="p-20 flex-col h-full text-center">
+                    <div class="mt-20">
+                        <h1 class="pronounce-word">En<span class="text-error">vi</span>ron<span class="text-success">ment</span></h1>
+                        <div class="pronounce-ipa">/in'vairomənt/</div>
+                        <div class="pronounce-meaning text-muted">môi trường</div>
+                    </div>
+                    <div class="score-card">
+                        <div class="score-title">ĐIỂM SỐ: <span class="text-success text-2xl font-bold">85%</span></div>
+                        <div class="score-breakdown">
+                            <div class="sb-item text-success">Good</div><div class="sb-item text-error">Bad</div><div class="sb-item text-success">Good</div>
+                        </div>
+                        <div class="score-tip">
+                            <i class="fa-solid fa-lightbulb text-orange"></i> <strong>Gợi ý sửa lỗi:</strong><br>Âm "vi" cần phát âm rõ hơn. Hãy kết hợp môi và răng khi phát âm chuẩn âm /v/.
+                        </div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-row mt-20"><button class="btn-outline flex-1 text-primary border-primary">Thử lại <i class="fa-solid fa-rotate-right"></i></button><button class="btn-primary flex-1">Tiếp tục <i class="fa-solid fa-arrow-right"></i></button></div>
+                </div>
+            `, { nav: 'pronunciation', header: 'Luyện phát âm' }),
+
+            // 26. NEW: Ôn Tập (Review Modes)
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="text-muted font-bold mb-20 text-sm">CHỌN CHẾ ĐỘ ÔN TẬP</div>
+                    
+                    <div class="review-mode-card easy">
+                        <div class="review-icon bg-green"><i class="fa-solid fa-check-double"></i></div>
+                        <div class="review-info">
+                            <h3 class="text-green">Dễ</h3>
+                            <p>Trắc nghiệm từ vựng cơ bản</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted ml-auto"></i>
+                    </div>
+                    
+                    <div class="review-mode-card medium">
+                        <div class="review-icon bg-orange"><i class="fa-solid fa-headphones"></i></div>
+                        <div class="review-info">
+                            <h3 class="text-orange">Vừa</h3>
+                            <p>Nghe và chọn từ chính xác</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted ml-auto"></i>
+                    </div>
+                    
+                    <div class="review-mode-card hard">
+                        <div class="review-icon bg-red"><i class="fa-solid fa-pen"></i></div>
+                        <div class="review-info">
+                            <h3 class="text-red">Khó</h3>
+                            <p>Điền từ vào chỗ trống / Lật thẻ</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted ml-auto"></i>
+                    </div>
+                    
+                    <div class="mt-20 bg-pink-light p-15 rounded-xl border border-pink text-sm" style="color: var(--text-main);">
+                        <i class="fa-solid fa-circle-info" style="color: var(--theme-pink-dark);"></i> Bạn đang có <b>24 từ vựng</b> đã đánh dấu cần ôn tập trong hôm nay.
+                    </div>
+                </div>
+            `, { header: 'Ôn tập' }),
+
+            // 27. NEW: Từ vựng đã đánh dấu (Bookmarked Words)
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="search-bar mb-20"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Tìm từ vựng..."></div>
+                    
+                    <div class="flex-between mb-15">
+                        <div class="font-bold text-main">24 từ đã lưu</div>
+                        <div class="text-primary font-bold text-sm"><i class="fa-solid fa-filter"></i> Mới nhất</div>
+                    </div>
+                    
+                    <div>
+                        <div class="word-list-item">
+                            <div class="flex-between">
+                                <div class="font-bold text-lg">Revenue</div>
+                                <i class="fa-solid fa-heart text-error"></i>
+                            </div>
+                            <div class="text-muted mt-5 text-sm">/ˈrev.ə.nuː/ • doanh thu</div>
+                        </div>
+                        <div class="word-list-item">
+                            <div class="flex-between">
+                                <div class="font-bold text-lg">Elephant</div>
+                                <i class="fa-solid fa-heart text-error"></i>
+                            </div>
+                            <div class="text-muted mt-5 text-sm">/ˈel.ɪ.fənt/ • con voi</div>
+                        </div>
+                        <div class="word-list-item">
+                            <div class="flex-between">
+                                <div class="font-bold text-lg">Environment</div>
+                                <i class="fa-solid fa-heart text-error"></i>
+                            </div>
+                            <div class="text-muted mt-5 text-sm">/in'vairomənt/ • môi trường</div>
+                        </div>
+                        <div class="word-list-item">
+                            <div class="flex-between">
+                                <div class="font-bold text-lg">Pollution</div>
+                                <i class="fa-solid fa-heart text-error"></i>
+                            </div>
+                            <div class="text-muted mt-5 text-sm">/pəˈluː.ʃən/ • ô nhiễm</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1"></div>
+                    <div class="bottom-action-fixed"><button class="btn-primary w-full shadow-glow">Bắt đầu ôn tập</button></div>
+                </div>
+            `, { header: 'Từ vựng đã lưu' }),
+
+            // 28. NEW: Gói đăng ký (Subscriptions)
+            createScreen(`
+                <div class="p-20 flex-col h-full">
+                    <div class="subs-header">Gói đăng ký</div>
+                    <div class="subs-subheader">SO SÁNH CÁC GÓI ĐĂNG KÝ</div>
+                    
+                    <div class="plan-card recommended">
+                        <div class="plan-badge">ĐỀ XUẤT</div>
+                        <div class="plan-title">Super</div>
+                        
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Năng lượng vô tận</span></div>
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Gọi video không giới hạn</span></div>
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Không quảng cáo</span></div>
+                        
+                        <button class="plan-btn">DÙNG THỬ VỚI GIÁ 0,00 đ</button>
+                        
+                        <div style="position: absolute; right: 20px; top: 60px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--theme-brown), var(--theme-pink)); border-radius: 16px; display: flex; justify-content: center; align-items: center; color: white; font-size: 28px; box-shadow: 0 10px 15px rgba(104, 78, 63, 0.2); transform: rotate(10deg);">
+                            <i class="fa-solid fa-infinity"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="plan-card">
+                        <div class="plan-title">Super gia đình</div>
+                        
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Năng lượng vô tận</span></div>
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Gọi video không giới hạn</span></div>
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Không quảng cáo</span></div>
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Tối đa 6 thành viên</span></div>
+                        <div class="plan-feature"><i class="fa-solid fa-check"></i> <span>Giảm giá tới 76% Super</span></div>
+                        
+                        <button class="plan-btn">DÙNG THỬ VỚI GIÁ 0,00 đ</button>
+                        
+                        <div style="position: absolute; right: 20px; top: 30px; display: flex; gap: -10px;">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--theme-cream); display: flex; justify-content: center; align-items: center; font-size: 20px; border: 3px solid white; z-index: 2; color: var(--theme-brown);"><i class="fa-solid fa-user-tie"></i></div>
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--theme-pink); display: flex; justify-content: center; align-items: center; font-size: 16px; border: 3px solid white; margin-left: -15px; margin-top: 18px; z-index: 1; color: var(--theme-pink-dark);"><i class="fa-solid fa-user"></i></div>
+                            <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--theme-brown-light); display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; color: var(--theme-brown); border: 3px solid white; margin-left: -10px; margin-top: -5px; z-index: 3;">+4</div>
+                        </div>
+                    </div>
+                </div>
+            `, { bgColor: 'subs-container', nav: 'premium' })
+        ];
+
+        document.getElementById('gallery').innerHTML = screens.join('');
+    </script>
+</body>
+</html>

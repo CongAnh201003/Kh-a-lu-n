@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayGate - Biểu đồ Phân tích Cổng Thanh Toán</title>
+  <meta name="description" content="Giao diện phân tích doanh thu, tỷ lệ trạng thái thanh toán và phễu chuyển đổi kích hoạt gói VIP cho PayGate.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- ApexCharts CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <div class="logo-box">
+            <!-- Icon phong cách hộp chéo chuẩn như ảnh mẫu -->
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="2" width="20" height="20" rx="3" stroke="#ffffff" stroke-width="2.2" fill="none" />
+              <path d="M2 2L22 22M22 2L2 22" stroke="#ffffff" stroke-width="1.8" />
+            </svg>
+          </div>
+          <span class="logo-text">PayGate</span>
+        </div>
+        <button class="mobile-sidebar-close" id="sidebarCloseBtn" aria-label="Đóng sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- Group 0: Quản lý giao dịch & thống kê (Khớp ảnh mẫu) -->
+        <div class="nav-group-title">QUẢN LÝ GIAO DỊCH &amp; THỐNG KÊ</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#kpi" class="nav-link" id="navKpi">
+              <i class="fa-solid fa-list-check nav-icon"></i>
+              <span>Thẻ số liệu KPI</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#charts" class="nav-link active" id="navCharts">
+              <i class="fa-solid fa-chart-line nav-icon"></i>
+              <span>Biểu đồ</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Group 1: Giao dịch & Đối soát (Khớp ảnh mẫu) -->
+        <div class="nav-group-title">GIAO DỊCH &amp; ĐỐI SOÁT</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#thu" class="nav-link" id="navThu">
+              <i class="fa-solid fa-arrow-down nav-icon"></i>
+              <span>Thu</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#chi" class="nav-link" id="navChi">
+              <i class="fa-solid fa-arrow-up nav-icon"></i>
+              <span>Chi</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#doi-soat" class="nav-link" id="navDoiSoat">
+              <i class="fa-solid fa-arrows-rotate nav-icon"></i>
+              <span>Đối soát</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#cai-dat" class="nav-link" id="navCaiDat">
+              <i class="fa-solid fa-gear nav-icon"></i>
+              <span>Cài đặt</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar Footer Status -->
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-pulse"></span>
+          <div class="status-info">
+            <span class="status-title">Hệ thống Gateway</span>
+            <span class="status-desc">Hoạt động ổn định (99.98%)</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- HEADER TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Mở Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="breadcrumb">
+            <span class="breadcrumb-app">PayGate</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Phân tích & Báo cáo</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Quick Date Filter -->
+          <div class="date-filter-wrapper">
+            <i class="fa-regular fa-calendar filter-icon"></i>
+            <select id="timeRangeSelect" class="time-range-select" aria-label="Khoảng thời gian">
+              <option value="sep2026" selected>Tháng 09/2026 (Toàn bộ)</option>
+              <option value="last7days">7 ngày gần nhất</option>
+              <option value="last30days">30 ngày qua</option>
+              <option value="today">Hôm nay</option>
+            </select>
+          </div>
+
+          <!-- Nút Báo cáo theo ảnh mẫu -->
+          <button class="btn-report" id="btnReport" aria-label="Xuất báo cáo">
+            <i class="fa-solid fa-bell bell-icon"></i>
+            <span>Báo cáo</span>
+            <span class="pulse-ring"></span>
+          </button>
+
+          <!-- Nút chuyển sang Admin Portal Quản trị App Học Tiếng Anh & Gateway -->
+          <a href="admin/index.html" class="btn-refresh" style="text-decoration:none;" title="Mở trang web Admin Quản trị App Học Tiếng Anh">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>Admin Portal App</span>
+          </a>
+
+          <!-- User Profile theo ảnh mẫu -->
+          <div class="user-profile-dropdown" id="userProfileDropdown">
+            <div class="user-profile-btn" id="userProfileBtn" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false">
+              <div class="avatar-badge">
+                <span class="avatar-text">AD</span>
+              </div>
+              <span class="user-name">Admin User</span>
+              <i class="fa-solid fa-chevron-down chevron-icon"></i>
+            </div>
+
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu" id="dropdownMenu">
+              <div class="dropdown-header">
+                <strong>Admin User</strong>
+                <small>admin@paygate.vn</small>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a href="#profile" class="dropdown-item"><i class="fa-regular fa-user"></i> Tài khoản của tôi</a>
+              <a href="#keys" class="dropdown-item"><i class="fa-solid fa-key"></i> Khóa API Gateway</a>
+              <a href="#logs" class="dropdown-item"><i class="fa-solid fa-clock-rotate-left"></i> Nhật ký hoạt động</a>
+              <div class="dropdown-divider"></div>
+              <a href="#logout" class="dropdown-item text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE CONTENT -->
+      <main class="content-area">
+        <!-- VIEW 1: DASHBOARD BIỂU ĐỒ & KPI -->
+        <div class="view-panel" id="dashboardView">
+          <!-- Page Title & Quick Metric Summary -->
+          <div class="page-header-row">
+          <div class="title-group">
+            <h1 class="page-title">Biểu đồ Phân tích</h1>
+            <p class="page-subtitle">Theo dõi hiệu suất doanh thu cổng thanh toán và tỷ lệ chuyển đổi khách hàng qua từng phễu</p>
+          </div>
+
+          <div class="header-actions">
+            <button class="btn-refresh" id="btnRefresh" title="Làm mới dữ liệu">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Làm mới</span>
+            </button>
+            <button class="btn-export" id="btnExport" title="Xuất dữ liệu Excel/PDF">
+              <i class="fa-solid fa-file-export"></i>
+              <span>Xuất dữ liệu</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TOP MINI KPI CARDS (Bổ sung tinh tế làm bật thông số tổng) -->
+        <div class="kpi-mini-grid">
+          <div class="kpi-mini-card">
+            <div class="kpi-mini-icon purple"><i class="fa-solid fa-wallet"></i></div>
+            <div class="kpi-mini-body">
+              <div class="kpi-mini-label">Tổng Doanh thu Tháng 9</div>
+              <div class="kpi-mini-val" id="kpiTotalRevenue">425,800,000 ₫</div>
+              <div class="kpi-mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% so với T8</div>
+            </div>
+          </div>
+
+          <div class="kpi-mini-card">
+            <div class="kpi-mini-icon blue"><i class="fa-solid fa-receipt"></i></div>
+            <div class="kpi-mini-body">
+              <div class="kpi-mini-label">Tổng Giao dịch Xử lý</div>
+              <div class="kpi-mini-val" id="kpiTotalTransactions">20,540</div>
+              <div class="kpi-mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +12.6% giao dịch mới</div>
+            </div>
+          </div>
+
+          <div class="kpi-mini-card">
+            <div class="kpi-mini-icon green"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="kpi-mini-body">
+              <div class="kpi-mini-label">Tỷ lệ Thành công Tổng</div>
+              <div class="kpi-mini-val" id="kpiSuccessRate">74.4%</div>
+              <div class="kpi-mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> +3.2% so với tuần trước</div>
+            </div>
+          </div>
+
+          <div class="kpi-mini-card">
+            <div class="kpi-mini-icon orange"><i class="fa-solid fa-filter"></i></div>
+            <div class="kpi-mini-body">
+              <div class="kpi-mini-label">Tỷ lệ Chuyển đổi Toàn Phễu</div>
+              <div class="kpi-mini-val" id="kpiFunnelRate">41.2%</div>
+              <div class="kpi-mini-change up"><i class="fa-solid fa-users"></i> 41,200 / 100,000 kích hoạt VIP thành công</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 MAIN CHARTS GRID (Khớp vị trí chính xác như ảnh mẫu) -->
+        <div class="charts-grid">
+          
+          <!-- CARD 1 (Top Left): Xu hướng Doanh thu -->
+          <section class="chart-card" id="cardRevenue">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h2 class="card-title">Xu hướng Doanh thu</h2>
+                <span class="card-tag">Đơn vị: VNĐ</span>
+              </div>
+              <div class="card-options">
+                <span class="period-badge">1/9 - 30/9</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="revenueChart" class="chart-container"></div>
+            </div>
+            <div class="card-footer-stats">
+              <div class="stat-pill">
+                <span class="stat-dot primary"></span>
+                <span>Cao nhất: <strong>48,500,000 ₫</strong> (25/09)</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-dot neutral"></span>
+                <span>Trung bình ngày: <strong>26,400,000 ₫</strong></span>
+              </div>
+            </div>
+          </section>
+
+          <!-- CARD 2 (Top Right): Tỷ lệ Trạng thái (BIỂU ĐỒ TRÒN THEO YÊU CẦU CỦA USER) -->
+          <section class="chart-card" id="cardStatus">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h2 class="card-title">Tỷ lệ Trạng thái</h2>
+                <span class="card-tag">Phân bổ kết quả xử lý thanh toán</span>
+              </div>
+              <div class="card-badge-info">
+                <i class="fa-solid fa-pie-chart"></i> Biểu đồ tròn
+              </div>
+            </div>
+            <div class="card-body donut-chart-body">
+              <div class="donut-wrapper">
+                <div id="statusDonutChart" class="chart-container"></div>
+                <!-- Center overlay info inside donut hole -->
+                <div class="donut-center-info">
+                  <span class="donut-total-number">20,540</span>
+                  <span class="donut-total-label">Tổng giao dịch</span>
+                </div>
+              </div>
+
+              <!-- Chi tiết 3 trạng thái: Thành công, Chờ, Lỗi -->
+              <div class="status-legend-list">
+                <!-- 1. Thành công -->
+                <div class="legend-card success-status">
+                  <div class="legend-indicator">
+                    <span class="legend-dot green"></span>
+                    <div class="legend-meta">
+                      <span class="legend-name">Thành công</span>
+                      <small class="legend-sub">Đã quyết toán & kích hoạt</small>
+                    </div>
+                  </div>
+                  <div class="legend-data">
+                    <span class="legend-percentage green-text">74.4%</span>
+                    <span class="legend-count">15,280 GD</span>
+                  </div>
+                </div>
+
+                <!-- 2. Chờ xử lý -->
+                <div class="legend-card pending-status">
+                  <div class="legend-indicator">
+                    <span class="legend-dot orange"></span>
+                    <div class="legend-meta">
+                      <span class="legend-name">Chờ xử lý</span>
+                      <small class="legend-sub">Chờ quét QR / OTP ngân hàng</small>
+                    </div>
+                  </div>
+                  <div class="legend-data">
+                    <span class="legend-percentage orange-text">18.3%</span>
+                    <span class="legend-count">3,760 GD</span>
+                  </div>
+                </div>
+
+                <!-- 3. Lỗi -->
+                <div class="legend-card error-status">
+                  <div class="legend-indicator">
+                    <span class="legend-dot red"></span>
+                    <div class="legend-meta">
+                      <span class="legend-name">Lỗi</span>
+                      <small class="legend-sub">Sai số dư / Timeout / Hủy bỏ</small>
+                    </div>
+                  </div>
+                  <div class="legend-data">
+                    <span class="legend-percentage red-text">7.3%</span>
+                    <span class="legend-count">1,500 GD</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer-stats">
+              <div class="stat-pill success">
+                <i class="fa-solid fa-shield-check"></i>
+                <span>Tỷ lệ hoàn tiền rủi ro: <strong>&lt; 0.05%</strong></span>
+              </div>
+              <div class="stat-pill warning">
+                <i class="fa-solid fa-clock"></i>
+                <span>Thời gian xử lý trung bình: <strong>1.8s</strong></span>
+              </div>
+            </div>
+          </section>
+
+          <!-- CARD 3 (Bottom Left): Cơ cấu theo Gói cước (2 loại: VIP & Premium) -->
+          <section class="chart-card" id="cardPackage">
+            <div class="card-header">
+              <div class="card-title-group">
+                <h2 class="card-title">Cơ cấu theo Gói cước</h2>
+                <span class="card-tag">Doanh thu Gói VIP vs Gói Premium theo các mốc thời gian (VNĐ)</span>
+              </div>
+              <div class="card-options">
+                <span class="package-top-badge" id="packageTopBadge"><i class="fa-solid fa-crown"></i> Gói VIP dẫn đầu (53.5%)</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="packageBarChart" class="chart-container"></div>
+            </div>
+            <div class="card-footer-stats">
+              <div class="stat-pill purple">
+                <i class="fa-solid fa-gem"></i>
+                <span id="pkgStatVip">Tổng VIP: <strong>541.0 Tr ₫</strong> (53.5%)</span>
+              </div>
+              <div class="stat-pill amber">
+                <i class="fa-solid fa-crown"></i>
+                <span id="pkgStatPremium">Tổng Premium: <strong>471.0 Tr ₫</strong> (46.5%)</span>
+              </div>
+              <div class="stat-pill neutral">
+                <span>Tháng 1: VIP <strong>50 Tr</strong> • Premium <strong>45.2 Tr</strong></span>
+              </div>
+            </div>
+          </section>
+
+          <!-- CARD 4 (Bottom Right): Phễu chuyển đổi & Bán hàng (Sales Funnel 4 Bước kèm số liệu & Drop) -->
+          <section class="chart-card sales-funnel-card" id="cardFunnel">
+            <div class="card-header">
+              <div class="card-title-group">
+                <div class="card-title-badge-row">
+                  <h2 class="card-title">Phễu Chuyển Đổi &amp; Bán Hàng</h2>
+                  <span class="badge-tag live-badge"><i class="fa-solid fa-circle-dot"></i> Sales Funnel 4 Bước</span>
+                  <span class="metric-tag"><i class="fa-solid fa-chart-pie"></i> Kèm số liệu &amp; Drop</span>
+                </div>
+                <p class="card-subtitle-highlight">
+                  Tỷ lệ chuyển đổi &amp; Tỷ lệ Drop khách hàng qua từng bước thanh toán
+                </p>
+              </div>
+              <div class="funnel-header-actions">
+                <!-- Nút phóng to / thu nhỏ -->
+                <button type="button" class="funnel-btn-icon" id="toggleExpandFunnelBtn" title="Phóng to / Thu nhỏ biểu đồ phễu">
+                  <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="card-body funnel-card-body">
+              <!-- KHUNG CHỨA BIỂU ĐỒ 3D SALES FUNNEL 4 BƯỚC (CHUẨN FORM ẢNH MẪU) -->
+              <div class="funnel-canvas-wrapper" id="funnelCanvasWrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 510" width="100%" height="100%" class="sales-funnel-svg" id="salesFunnelSvg" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <!-- Nền xanh Navy đậm phong cách Fintech hoàng gia giống hệt ảnh mẫu -->
+                    <linearGradient id="bgNavyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#082256"/>
+                      <stop offset="50%" stop-color="#0b2c6d"/>
+                      <stop offset="100%" stop-color="#061a45"/>
+                    </linearGradient>
+
+                    <!-- Độ sâu bên trong phễu ở tầng 1 (Inner cavity 3D hollow depth) -->
+                    <radialGradient id="innerCavityGrad" cx="50%" cy="38%" r="62%">
+                      <stop offset="0%" stop-color="#4d0716"/>
+                      <stop offset="65%" stop-color="#730e22"/>
+                      <stop offset="100%" stop-color="#96172f"/>
+                    </radialGradient>
+
+                    <!-- Hiệu ứng đổ bóng 3D hình trụ cho Tầng 1: Đỏ hồng / Crimson (#E84A5F) -->
+                    <linearGradient id="tier1Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#cc2542"/>
+                      <stop offset="28%" stop-color="#fa5571"/>
+                      <stop offset="62%" stop-color="#eb3858"/>
+                      <stop offset="100%" stop-color="#b81833"/>
+                    </linearGradient>
+
+                    <!-- Hiệu ứng đổ bóng 3D cho Tầng 2: Cam đỏ san hô (#F25C54) -->
+                    <linearGradient id="tier2Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#d63f25"/>
+                      <stop offset="28%" stop-color="#fa6d52"/>
+                      <stop offset="62%" stop-color="#f25335"/>
+                      <stop offset="100%" stop-color="#bd2b13"/>
+                    </linearGradient>
+
+                    <!-- Hiệu ứng đổ bóng 3D cho Tầng 3: Vàng hổ phách (#F9BC60 / #F7B731) -->
+                    <linearGradient id="tier3Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#d99516"/>
+                      <stop offset="28%" stop-color="#ffcf54"/>
+                      <stop offset="62%" stop-color="#f7b731"/>
+                      <stop offset="100%" stop-color="#bf7d08"/>
+                    </linearGradient>
+
+                    <!-- Hiệu ứng đổ bóng 3D cho Tầng 4: Xanh ngọc lục bảo VIP (#10B981) -->
+                    <linearGradient id="tier4Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#059669"/>
+                      <stop offset="28%" stop-color="#34d399"/>
+                      <stop offset="62%" stop-color="#10b981"/>
+                      <stop offset="100%" stop-color="#047857"/>
+                    </linearGradient>
+
+                    <!-- Bộ lọc phát sáng vi tế cho các điểm mốc trắng -->
+                    <filter id="dotGlow" x="-60%" y="-60%" width="220%" height="220%">
+                      <feDropShadow dx="0" dy="0" stdDeviation="2.5" flood-color="#ffffff" flood-opacity="0.85"/>
+                    </filter>
+                  </defs>
+
+                  <!-- Nền xanh chuẩn ảnh mẫu -->
+                  <rect width="100%" height="100%" rx="14" fill="url(#bgNavyGrad)"/>
+
+                  <!-- CHỮ SALES FUNNEL BÊN TRÁI (CHUẨN FORM ẢNH MẪU) -->
+                  <g class="sales-funnel-brand-title" transform="translate(42, 395)">
+                    <text x="0" y="0" fill="#ffffff" font-family="'Outfit', 'Plus Jakarta Sans', sans-serif" font-size="46" font-weight="900" letter-spacing="2">SALES</text>
+                    <text x="0" y="52" fill="#ffffff" font-family="'Outfit', 'Plus Jakarta Sans', sans-serif" font-size="46" font-weight="900" letter-spacing="2">FUNNEL</text>
+                  </g>
+
+                  <!-- ================= CẤU TRÚC PHỄU 3D 4 TẦNG (TÂM X = 330) ================= -->
+                  <g class="funnel-3d-cone" id="funnel3dCone">
+
+                    <!-- TẦNG 1: Xem màn hình bảng giá / gói VIP (Crimson Red) -->
+                    <g class="tier-interactive-group" data-tier="1" id="funnelGroup1">
+                      <!-- Lòng chảo bên trong tạo độ sâu 3D -->
+                      <ellipse cx="330" cy="65" rx="145" ry="23" fill="url(#innerCavityGrad)"/>
+                      <ellipse cx="330" cy="65" rx="145" ry="23" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.2"/>
+                      <!-- Thân nón cụt tầng 1 -->
+                      <path d="M 185 65 A 145 23 0 0 0 475 65 L 442 145 A 112 17.8 0 0 1 218 145 Z" fill="url(#tier1Grad)" class="tier-body"/>
+                    </g>
+
+                    <!-- TẦNG 2: Bấm "Mua ngay" & chọn phương thức (Coral Orange) -->
+                    <g class="tier-interactive-group" data-tier="2" id="funnelGroup2">
+                      <path d="M 221 150 A 109 17.3 0 0 0 439 150 L 408 230 A 78 12.4 0 0 1 252 230 Z" fill="url(#tier2Grad)" class="tier-body"/>
+                    </g>
+
+                    <!-- TẦNG 3: Mở mã QR / Chuyển sang App ngân hàng (Golden Amber) -->
+                    <g class="tier-interactive-group" data-tier="3" id="funnelGroup3">
+                      <path d="M 255 236 A 75 11.9 0 0 0 405 236 L 376 320 A 46 7.4 0 0 1 284 320 Z" fill="url(#tier3Grad)" class="tier-body"/>
+                    </g>
+
+                    <!-- TẦNG 4: Thanh toán Thành công (Kích hoạt VIP) (Emerald VIP Green) -->
+                    <g class="tier-interactive-group" data-tier="4" id="funnelGroup4">
+                      <!-- Ống trụ đáy phễu hoàn tất chuyển đổi -->
+                      <path d="M 286 326 A 44 7.0 0 0 0 374 326 L 374 440 A 44 7.0 0 0 1 286 440 Z" fill="url(#tier4Grad)" class="tier-body"/>
+                      <!-- Đáy bo tròn của ống phễu -->
+                      <ellipse cx="330" cy="440" rx="44" ry="7.0" fill="#044e37" opacity="0.7"/>
+                    </g>
+                  </g>
+
+                  <!-- ================= CÁC ĐƯỜNG CHỈ DẪN, NÚT TRÒN & NHÃN TEXT (4 BƯỚC) ================= -->
+                  <g class="funnel-indicators" id="funnelIndicators">
+
+                    <!-- BƯỚC 1: Xem màn hình bảng giá / gói VIP -->
+                    <g class="stage-guide-item" data-tier="1">
+                      <line x1="330" y1="105" x2="520" y2="105" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" class="guide-line"/>
+                      <circle cx="330" cy="105" r="5.5" fill="#ffffff" filter="url(#dotGlow)" class="guide-dot"/>
+                      <text x="535" y="111" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="17.5" font-weight="700" class="stage-title-text">1. Xem màn hình bảng giá / gói VIP</text>
+                      <!-- Thẻ dữ liệu bổ sung -->
+                      <g class="stage-metric-group">
+                        <text x="840" y="111" fill="#fca5a5" font-family="'Outfit', sans-serif" font-size="14.5" font-weight="700" id="funnelCount1">100,000</text>
+                        <text x="900" y="111" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="13" font-weight="600" opacity="0.85" id="funnelPct1">(100%)</text>
+                      </g>
+                    </g>
+
+                    <!-- BƯỚC 2: Bấm "Mua ngay" & chọn phương thức -->
+                    <g class="stage-guide-item" data-tier="2">
+                      <line x1="330" y1="190" x2="520" y2="190" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" class="guide-line"/>
+                      <circle cx="330" cy="190" r="5.5" fill="#ffffff" filter="url(#dotGlow)" class="guide-dot"/>
+                      <text x="535" y="196" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="17.5" font-weight="700" class="stage-title-text">2. Bấm "Mua ngay" &amp; chọn phương thức</text>
+                      <g class="stage-metric-group">
+                        <text x="850" y="196" fill="#fdba74" font-family="'Outfit', sans-serif" font-size="14.5" font-weight="700" id="funnelCount2">62,500</text>
+                        <text x="905" y="196" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="13" font-weight="600" opacity="0.85" id="funnelPct2">(62.5%)</text>
+                        <rect x="955" y="181" width="95" height="22" rx="5" fill="rgba(239, 68, 68, 0.25)" stroke="rgba(248, 113, 113, 0.4)" stroke-width="1"/>
+                        <text x="963" y="196" fill="#fca5a5" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" id="funnelDrop2">▼ Drop 37.5%</text>
+                      </g>
+                    </g>
+
+                    <!-- BƯỚC 3: Mở mã QR / Chuyển sang App ngân hàng -->
+                    <g class="stage-guide-item" data-tier="3">
+                      <line x1="330" y1="278" x2="520" y2="278" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" class="guide-line"/>
+                      <circle cx="330" cy="278" r="5.5" fill="#ffffff" filter="url(#dotGlow)" class="guide-dot"/>
+                      <text x="535" y="284" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="17.5" font-weight="700" class="stage-title-text">3. Mở mã QR / Chuyển sang App ngân hàng</text>
+                      <g class="stage-metric-group">
+                        <text x="880" y="284" fill="#fde047" font-family="'Outfit', sans-serif" font-size="14.5" font-weight="700" id="funnelCount3">46,800</text>
+                        <text x="935" y="284" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="13" font-weight="600" opacity="0.85" id="funnelPct3">(46.8%)</text>
+                        <rect x="980" y="269" width="75" height="22" rx="5" fill="rgba(239, 68, 68, 0.25)" stroke="rgba(248, 113, 113, 0.4)" stroke-width="1"/>
+                        <text x="987" y="284" fill="#fca5a5" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" id="funnelDrop3">▼ 25.1%</text>
+                      </g>
+                    </g>
+
+                    <!-- BƯỚC 4: Thanh toán Thành công (Kích hoạt VIP) -->
+                    <g class="stage-guide-item" data-tier="4">
+                      <line x1="330" y1="383" x2="520" y2="383" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" class="guide-line"/>
+                      <circle cx="330" cy="383" r="5.5" fill="#ffffff" filter="url(#dotGlow)" class="guide-dot"/>
+                      <text x="535" y="389" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="17.5" font-weight="800" class="stage-title-text">4. Thanh toán Thành công (Kích hoạt VIP)</text>
+                      <g class="stage-metric-group">
+                        <text x="890" y="389" fill="#4ade80" font-family="'Outfit', sans-serif" font-size="14.5" font-weight="800" id="funnelCount4">41,200</text>
+                        <text x="945" y="389" fill="#86efac" font-family="'Outfit', sans-serif" font-size="13" font-weight="700" id="funnelPct4">(41.2% 🎉)</text>
+                        <rect x="1000" y="374" width="55" height="22" rx="5" fill="rgba(16, 185, 129, 0.25)" stroke="rgba(52, 211, 153, 0.4)" stroke-width="1"/>
+                        <text x="1005" y="389" fill="#6ee7b7" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5" font-weight="700">88% QR</text>
+                      </g>
+                    </g>
+
+                  </g>
+                </svg>
+
+                <!-- Tooltip tương tác hiển thị chi tiết khi rê chuột vào từng tầng -->
+                <div class="funnel-hover-tooltip" id="funnelHoverTooltip">
+                  <div class="tooltip-header">
+                    <span class="tooltip-color-bar" id="tooltipBar"></span>
+                    <div>
+                      <h4 class="tooltip-title" id="tooltipTitle">Xem màn hình bảng giá / gói VIP</h4>
+                      <span class="tooltip-subtitle" id="tooltipSub">Giai đoạn 1 / 4</span>
+                    </div>
+                  </div>
+                  <div class="tooltip-stats">
+                    <div class="stat-col">
+                      <span class="stat-lbl">Khách hàng</span>
+                      <strong class="stat-num" id="tooltipUsers">100,000</strong>
+                    </div>
+                    <div class="stat-col">
+                      <span class="stat-lbl">Tỷ lệ chuyển đổi</span>
+                      <strong class="stat-num highlight" id="tooltipRate">100%</strong>
+                    </div>
+                    <div class="stat-col" id="tooltipDropCol">
+                      <span class="stat-lbl">Tỷ lệ Drop</span>
+                      <strong class="stat-num drop" id="tooltipDrop">-</strong>
+                    </div>
+                  </div>
+                  <p class="tooltip-action-note" id="tooltipNote">Khách hàng truy cập trang giới thiệu tính năng và bảng giá gói VIP.</p>
+                </div>
+              </div>
+
+              <!-- PHÂN TÍCH DROP-OFF & TỐI ƯU HÓA LUỒNG THANH TOÁN -->
+              <div class="funnel-insight-card">
+                <div class="insight-header">
+                  <i class="fa-solid fa-lightbulb"></i>
+                  <span>Đánh giá &amp; Điểm rơi rớt (Drop-off Analysis):</span>
+                </div>
+                <div class="insight-grid">
+                  <div class="insight-item">
+                    <span class="insight-title">Điểm Drop lớn nhất:</span>
+                    <strong class="insight-val red-text">Bước 1 ➔ Bước 2 (-37.5%)</strong>
+                    <small>37,500 khách rời bỏ sau khi xem bảng giá. Cần tối ưu bảng so sánh quyền lợi VIP và bổ sung bảo đảm hoàn tiền.</small>
+                  </div>
+                  <div class="insight-item">
+                    <span class="insight-title">Tỷ lệ quét QR ➔ Kích hoạt:</span>
+                    <strong class="insight-val green-text">88.0% chốt đơn thành công</strong>
+                    <small>41,200 / 46,800 khách mở mã QR hoàn tất thanh toán. Cổng VietQR và Deeplink App Ngân hàng hoạt động cực kỳ mượt mà.</small>
+                  </div>
+                  <div class="insight-item">
+                    <span class="insight-title">Hiệu suất toàn phễu:</span>
+                    <strong class="insight-val blue-text">41.2% kích hoạt VIP</strong>
+                    <small>41,200 người dùng kích hoạt gói VIP thành công trên tổng số 100,000 lượt tiếp cận ban đầu.</small>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            
+            <div class="card-footer-stats">
+              <div class="stat-pill success">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Chuyển đổi hoàn tất: <strong>41,200 người dùng VIP</strong></span>
+              </div>
+              <div class="stat-pill purple">
+                <i class="fa-solid fa-qrcode"></i>
+                <span>Tỷ lệ chốt đơn từ mã QR: <strong>88.0%</strong></span>
+              </div>
+              <div class="stat-pill neutral">
+                <i class="fa-solid fa-bullseye"></i>
+                <span>Hiệu suất toàn phễu: <strong>41.2%</strong></span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <!-- KẾT THÚC VIEW 1: DASHBOARD VIEW -->
+
+        <!-- VIEW 2: BẢNG GIAO DỊCH THU (THEO GIAO DIỆN ẢNH MẪU - KHÔNG CÓ CỘT ĐỐI SOÁT, NÚT DUYỆT THỦ CÔNG & CHẠY ĐỐI SOÁT) -->
+        <div class="view-panel" id="transactionThuView" style="display: none;">
+          <!-- Tiêu đề trang -->
+          <div class="thu-page-header">
+            <h1 class="thu-page-title">Bảng Giao Dịch Thu</h1>
+          </div>
+
+          <!-- Thanh công cụ tìm kiếm & bộ lọc -->
+          <div class="thu-toolbar-row">
+            <div class="thu-filter-group">
+              <!-- Ô tìm kiếm -->
+              <div class="thu-search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="thuSearchInput" class="thu-input" placeholder="Tìm theo...">
+              </div>
+
+              <!-- Ô ngày tháng (dd---yyyy) -->
+              <div class="thu-date-input-wrapper">
+                <input type="text" id="thuDateInput" class="thu-input" placeholder="dd---yyyy" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                <i class="fa-regular fa-calendar-days"></i>
+              </div>
+
+              <!-- Dropdown trạng thái -->
+              <div class="thu-select-wrapper">
+                <select id="thuStatusFilter" class="thu-select">
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="success">Thành công</option>
+                  <option value="error">Lỗi</option>
+                  <option value="pending">Chờ xử lý</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Nhóm nút hành động: CHỈ CÓ Xuất Excel (KHÔNG có Duyệt thủ công & Chạy đối soát) -->
+            <div class="thu-actions-group">
+              <button type="button" class="btn-thu-export" id="btnThuExport" title="Xuất dữ liệu ra file Excel">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Xuất Excel</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bảng giao dịch thu (KHÔNG có cột ĐỐI SOÁT) -->
+          <div class="thu-table-card">
+            <div class="table-responsive">
+              <table class="thu-table" id="thuTable">
+                <thead>
+                  <tr>
+                    <th class="col-order">MÃ ĐƠN</th>
+                    <th class="col-time">NGÀY GIỜ</th>
+                    <th class="col-user">USER</th>
+                    <th class="col-pkg">GÓI HỌC</th>
+                    <th class="col-amount">SỐ TIỀN</th>
+                    <th class="col-bank">MÃ GD BANK</th>
+                    <th class="col-status">TRẠNG THÁI</th>
+                  </tr>
+                </thead>
+                <tbody id="thuTableBody">
+                  <!-- Các hàng dữ liệu khớp 100% ảnh mẫu của user -->
+                  <tr data-status="error" data-search="INV-1001 user1@email.com basic mb758930">
+                    <td class="col-order"><span class="cell-code">INV-1001</span></td>
+                    <td class="col-time">2026-09-22 10:00:00</td>
+                    <td class="col-user">user1@email.com</td>
+                    <td class="col-pkg">Basic</td>
+                    <td class="col-amount text-amount-green">595.340 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB758930</span></td>
+                    <td class="col-status"><span class="status-indicator error"><span class="dot-red"></span> Lỗi</span></td>
+                  </tr>
+                  <tr data-status="error" data-search="INV-1002 user2@email.com basic mb823219">
+                    <td class="col-order"><span class="cell-code">INV-1002</span></td>
+                    <td class="col-time">2026-09-16 10:00:00</td>
+                    <td class="col-user">user2@email.com</td>
+                    <td class="col-pkg">Basic</td>
+                    <td class="col-amount text-amount-green">367.629 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB823219</span></td>
+                    <td class="col-status"><span class="status-indicator error"><span class="dot-red"></span> Lỗi</span></td>
+                  </tr>
+                  <tr data-status="success" data-search="INV-1003 user3@email.com vip mb346391">
+                    <td class="col-order"><span class="cell-code">INV-1003</span></td>
+                    <td class="col-time">2026-09-13 10:00:00</td>
+                    <td class="col-user">user3@email.com</td>
+                    <td class="col-pkg">VIP</td>
+                    <td class="col-amount text-amount-green">551.095 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB346391</span></td>
+                    <td class="col-status"><span class="status-indicator success"><span class="dot-green"></span> Thành công</span></td>
+                  </tr>
+                  <tr data-status="error" data-search="INV-1004 user4@email.com basic mb772248">
+                    <td class="col-order"><span class="cell-code">INV-1004</span></td>
+                    <td class="col-time">2026-09-23 10:00:00</td>
+                    <td class="col-user">user4@email.com</td>
+                    <td class="col-pkg">Basic</td>
+                    <td class="col-amount text-amount-green">490.878 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB772248</span></td>
+                    <td class="col-status"><span class="status-indicator error"><span class="dot-red"></span> Lỗi</span></td>
+                  </tr>
+                  <tr data-status="error" data-search="INV-1005 user5@email.com vip mb456947">
+                    <td class="col-order"><span class="cell-code">INV-1005</span></td>
+                    <td class="col-time">2026-09-20 10:00:00</td>
+                    <td class="col-user">user5@email.com</td>
+                    <td class="col-pkg">VIP</td>
+                    <td class="col-amount text-amount-green">213.529 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB456947</span></td>
+                    <td class="col-status"><span class="status-indicator error"><span class="dot-red"></span> Lỗi</span></td>
+                  </tr>
+                  <!-- Thêm các hàng dữ liệu sinh động bổ sung -->
+                  <tr data-status="success" data-search="INV-1006 user6@email.com premium mb912431">
+                    <td class="col-order"><span class="cell-code">INV-1006</span></td>
+                    <td class="col-time">2026-09-18 14:30:15</td>
+                    <td class="col-user">user6@email.com</td>
+                    <td class="col-pkg">Premium</td>
+                    <td class="col-amount text-amount-green">680.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB912431</span></td>
+                    <td class="col-status"><span class="status-indicator success"><span class="dot-green"></span> Thành công</span></td>
+                  </tr>
+                  <tr data-status="success" data-search="INV-1007 user7@email.com vip vcb28491">
+                    <td class="col-order"><span class="cell-code">INV-1007</span></td>
+                    <td class="col-time">2026-09-17 09:15:22</td>
+                    <td class="col-user">user7@email.com</td>
+                    <td class="col-pkg">VIP</td>
+                    <td class="col-amount text-amount-green">350.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">VCB28491</span></td>
+                    <td class="col-status"><span class="status-indicator success"><span class="dot-green"></span> Thành công</span></td>
+                  </tr>
+                  <tr data-status="pending" data-search="INV-1008 user8@email.com basic tcb84729">
+                    <td class="col-order"><span class="cell-code">INV-1008</span></td>
+                    <td class="col-time">2026-09-15 16:45:00</td>
+                    <td class="col-user">user8@email.com</td>
+                    <td class="col-pkg">Basic</td>
+                    <td class="col-amount text-amount-green">199.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">TCB84729</span></td>
+                    <td class="col-status"><span class="status-indicator pending"><span class="dot-orange"></span> Chờ xử lý</span></td>
+                  </tr>
+                  <tr data-status="success" data-search="INV-1009 user9@email.com premium mb639201">
+                    <td class="col-order"><span class="cell-code">INV-1009</span></td>
+                    <td class="col-time">2026-09-14 11:20:30</td>
+                    <td class="col-user">user9@email.com</td>
+                    <td class="col-pkg">Premium</td>
+                    <td class="col-amount text-amount-green">890.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB639201</span></td>
+                    <td class="col-status"><span class="status-indicator success"><span class="dot-green"></span> Thành công</span></td>
+                  </tr>
+                  <tr data-status="error" data-search="INV-1010 user10@email.com vip bidv9128">
+                    <td class="col-order"><span class="cell-code">INV-1010</span></td>
+                    <td class="col-time">2026-09-12 18:05:12</td>
+                    <td class="col-user">user10@email.com</td>
+                    <td class="col-pkg">VIP</td>
+                    <td class="col-amount text-amount-green">450.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">BIDV9128</span></td>
+                    <td class="col-status"><span class="status-indicator error"><span class="dot-red"></span> Lỗi</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Chân bảng: Thống kê & Phân trang -->
+            <div class="thu-table-footer">
+              <span class="thu-footer-info" id="thuTableInfo">Hiển thị 10 giao dịch gần nhất</span>
+              <div class="thu-pagination">
+                <button type="button" class="btn-page-nav disabled" title="Trang trước"><i class="fa-solid fa-chevron-left"></i></button>
+                <button type="button" class="btn-page active">1</button>
+                <button type="button" class="btn-page">2</button>
+                <button type="button" class="btn-page">3</button>
+                <button type="button" class="btn-page-nav" title="Trang tiếp theo"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- KẾT THÚC VIEW 2: BẢNG GIAO DỊCH THU -->
+
+        <!-- VIEW 2.5: BẢNG GIAO DỊCH CHI -->
+        <div class="view-panel" id="transactionChiView" style="display: none;">
+          <div class="thu-page-header">
+            <h1 class="thu-page-title">Bảng Giao Dịch Chi</h1>
+          </div>
+
+          <div class="thu-toolbar-row">
+            <div class="thu-filter-group">
+              <div class="thu-search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="chiSearchInput" class="thu-input" placeholder="Tìm theo...">
+              </div>
+              <div class="thu-date-input-wrapper">
+                <input type="text" id="chiDateInput" class="thu-input" placeholder="dd---yyyy" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                <i class="fa-regular fa-calendar-days"></i>
+              </div>
+              <div class="thu-select-wrapper">
+                <select id="chiStatusFilter" class="thu-select">
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="success">Thành công</option>
+                  <option value="error">Lỗi</option>
+                  <option value="pending">Chờ xử lý</option>
+                </select>
+              </div>
+            </div>
+            <div class="thu-actions-group">
+              <button type="button" class="btn-thu-export" id="btnChiExport" title="Xuất dữ liệu ra file Excel">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>Xuất Excel</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="thu-table-card">
+            <div class="table-responsive">
+              <table class="thu-table" id="chiTable">
+                <thead>
+                  <tr>
+                    <th class="col-order">MÃ YÊU CẦU</th>
+                    <th class="col-time">NGÀY GIỜ</th>
+                    <th class="col-user">NGƯỜI NHẬN</th>
+                    <th class="col-pkg">LOẠI CHI</th>
+                    <th class="col-amount">SỐ TIỀN CHI</th>
+                    <th class="col-bank">MÃ GD BANK</th>
+                    <th class="col-status">TRẠNG THÁI</th>
+                  </tr>
+                </thead>
+                <tbody id="chiTableBody">
+                  <tr data-status="success" data-search="EXP-1001 partner1@email.com hoahong mb112233">
+                    <td class="col-order"><span class="cell-code">EXP-1001</span></td>
+                    <td class="col-time">2026-09-22 14:00:00</td>
+                    <td class="col-user">partner1@email.com</td>
+                    <td class="col-pkg">Hoa hồng</td>
+                    <td class="col-amount" style="color: #ef4444; font-weight: 700;">-1.500.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">MB112233</span></td>
+                    <td class="col-status"><span class="status-indicator success"><span class="dot-green"></span> Thành công</span></td>
+                  </tr>
+                  <tr data-status="pending" data-search="EXP-1002 partner2@email.com hoan-tien vcb445566">
+                    <td class="col-order"><span class="cell-code">EXP-1002</span></td>
+                    <td class="col-time">2026-09-21 09:30:00</td>
+                    <td class="col-user">partner2@email.com</td>
+                    <td class="col-pkg">Hoàn tiền</td>
+                    <td class="col-amount" style="color: #ef4444; font-weight: 700;">-490.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">VCB445566</span></td>
+                    <td class="col-status"><span class="status-indicator pending"><span class="dot-orange"></span> Chờ xử lý</span></td>
+                  </tr>
+                  <tr data-status="error" data-search="EXP-1003 partner3@email.com thanh-toan tcb778899">
+                    <td class="col-order"><span class="cell-code">EXP-1003</span></td>
+                    <td class="col-time">2026-09-20 16:15:00</td>
+                    <td class="col-user">partner3@email.com</td>
+                    <td class="col-pkg">Thanh toán đối tác</td>
+                    <td class="col-amount" style="color: #ef4444; font-weight: 700;">-2.000.000 đ</td>
+                    <td class="col-bank"><span class="cell-bank">TCB778899</span></td>
+                    <td class="col-status"><span class="status-indicator error"><span class="dot-red"></span> Lỗi</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="thu-table-footer">
+              <span class="thu-footer-info" id="chiTableInfo">Hiển thị 3 giao dịch gần nhất</span>
+              <div class="thu-pagination">
+                <button type="button" class="btn-page-nav disabled" title="Trang trước"><i class="fa-solid fa-chevron-left"></i></button>
+                <button type="button" class="btn-page active">1</button>
+                <button type="button" class="btn-page-nav disabled" title="Trang tiếp theo"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- KẾT THÚC VIEW 2.5: BẢNG GIAO DỊCH CHI -->
+
+        <!-- VIEW 3: BẢNG ĐỐI SOÁT GIAO DỊCH (ĐẦY ĐỦ CÁC TRƯỜNG NGHIỆP VỤ THEO YÊU CẦU CỦA USER) -->
+        <div class="view-panel" id="doiSoatView" style="display: none;">
+          <!-- Header tiêu đề & giới thiệu nghiệp vụ -->
+          <div class="thu-page-header">
+            <div class="page-header-row">
+              <div class="title-group">
+                <h1 class="thu-page-title">Bảng Đối Soát Giao Dịch</h1>
+                <p class="page-subtitle">Đối chiếu tự động thời gian thực giữa Hệ thống App PayGate &amp; Cổng Ngân hàng / PayOS</p>
+              </div>
+              <div class="header-actions">
+                <button type="button" class="btn-refresh" id="btnRunReconcile" title="Chạy quét đối chiếu dữ liệu mới nhất">
+                  <i class="fa-solid fa-bolt"></i>
+                  <span>Chạy đối soát tức thì</span>
+                </button>
+                <button type="button" class="btn-thu-export" id="btnExportReconcile" title="Xuất báo cáo đối soát ra Excel">
+                  <i class="fa-solid fa-file-excel"></i>
+                  <span>Xuất Excel Đối Soát</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Thẻ KPI tóm tắt tình trạng đối soát -->
+          <div class="kpi-mini-grid">
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon blue"><i class="fa-solid fa-list-check"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">Tổng lượt đối soát</div>
+                <div class="kpi-mini-val" id="reconcileTotalCount">1,280 GD</div>
+                <div class="kpi-mini-change up"><i class="fa-solid fa-check-double"></i> Đã xử lý 100% phiên T9</div>
+              </div>
+            </div>
+
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon green"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">MATCHED (Khớp hoàn toàn)</div>
+                <div class="kpi-mini-val text-green-glow" id="reconcileMatchedCount">1,185 GD</div>
+                <div class="kpi-mini-change up"><i class="fa-solid fa-arrow-trend-up"></i> Tỷ lệ khớp: 92.6%</div>
+              </div>
+            </div>
+
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">Cần can thiệp xử lý</div>
+                <div class="kpi-mini-val text-orange-glow" id="reconcileIssueCount">95 GD</div>
+                <div class="kpi-mini-change down"><i class="fa-solid fa-circle-exclamation"></i> Lệch tiền / Sai mã đơn</div>
+              </div>
+            </div>
+
+            <div class="kpi-mini-card">
+              <div class="kpi-mini-icon purple"><i class="fa-solid fa-scale-unbalanced"></i></div>
+              <div class="kpi-mini-body">
+                <div class="kpi-mini-label">Tổng lệch tiền phát hiện</div>
+                <div class="kpi-mini-val text-red-glow" id="reconcileDiffAmount">-480,000 ₫</div>
+                <div class="kpi-mini-change"><i class="fa-solid fa-coins"></i> Cần hoàn / truy thu</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thanh tìm kiếm & bộ lọc nâng cao cho Đối soát -->
+          <div class="thu-toolbar-row">
+            <div class="thu-filter-group">
+              <!-- Ô tìm kiếm -->
+              <div class="thu-search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="doiSoatSearchInput" class="thu-input" placeholder="Tìm mã đối soát, mã đơn, bank, nội dung CK...">
+              </div>
+
+              <!-- Lọc Trạng thái đối soát -->
+              <div class="thu-select-wrapper">
+                <select id="doiSoatStatusFilter" class="thu-select">
+                  <option value="all">Tất cả trạng thái đối soát</option>
+                  <option value="MATCHED">🟢 MATCHED (Khớp hoàn toàn)</option>
+                  <option value="AMOUNT_MISMATCH">🟠 AMOUNT_MISMATCH (Lệch tiền)</option>
+                  <option value="CODE_MISMATCH">🟣 CODE_MISMATCH (Sai mã đơn)</option>
+                  <option value="MISSING_IN_APP">🔴 MISSING_IN_APP (Thiếu trên App)</option>
+                  <option value="PENDING">🟡 PENDING (Chờ đối soát)</option>
+                </select>
+              </div>
+
+              <!-- Lọc Chênh lệch tiền -->
+              <div class="thu-select-wrapper">
+                <select id="doiSoatDiffFilter" class="thu-select">
+                  <option value="all">Tất cả chênh lệch</option>
+                  <option value="has_diff">Có chênh lệch (≠ 0đ)</option>
+                  <option value="no_diff">Không chênh lệch (= 0đ)</option>
+                  <option value="negative">Chuyển thiếu (&lt; 0đ)</option>
+                  <option value="positive">Chuyển thừa (&gt; 0đ)</option>
+                </select>
+              </div>
+
+              <!-- Ô ngày tháng -->
+              <div class="thu-date-input-wrapper">
+                <input type="text" id="doiSoatDateInput" class="thu-input" placeholder="dd---yyyy" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                <i class="fa-regular fa-calendar-days"></i>
+              </div>
+            </div>
+
+            <!-- Chú giải nhanh trạng thái -->
+            <div class="reconcile-legend-pills">
+              <span class="legend-pill matched"><i class="fa-solid fa-circle-check"></i> MATCHED</span>
+              <span class="legend-pill amount-diff"><i class="fa-solid fa-triangle-exclamation"></i> AMOUNT_MISMATCH</span>
+              <span class="legend-pill code-diff"><i class="fa-solid fa-font"></i> CODE_MISMATCH</span>
+              <span class="legend-pill missing"><i class="fa-solid fa-circle-xmark"></i> MISSING_IN_APP</span>
+            </div>
+          </div>
+
+          <!-- BẢNG ĐỐI SOÁT CHÍNH (ĐẦY ĐỦ 10 CỘT YÊU CẦU) -->
+          <div class="thu-table-card">
+            <div class="table-responsive">
+              <table class="thu-table reconcile-table" id="doiSoatTable">
+                <thead>
+                  <tr>
+                    <th class="col-rec">MÃ ĐỐI SOÁT</th>
+                    <th class="col-app-order">MÃ ĐƠN HỆ THỐNG</th>
+                    <th class="col-bank-ref">MÃ GD PAYOS / BANK</th>
+                    <th class="col-sys-amount">SỐ TIỀN HỆ THỐNG</th>
+                    <th class="col-real-amount">SỐ TIỀN THỰC NHẬN</th>
+                    <th class="col-diff">CHÊNH LỆCH</th>
+                    <th class="col-raw-content">NỘI DUNG CK THỰC TẾ</th>
+                    <th class="col-rec-status">TRẠNG THÁI ĐỐI SOÁT</th>
+                    <th class="col-rec-time">THỜI GIAN GIAO DỊCH</th>
+                    <th class="col-actions">THAO TÁC XỬ LÝ</th>
+                  </tr>
+                </thead>
+                <tbody id="doiSoatTableBody">
+                  <!-- HÀNG 1: AMOUNT_MISMATCH (Chuyển thiếu 10.000 đ) -->
+                  <tr data-status="AMOUNT_MISMATCH" data-diff="negative" data-search="REC-20260922-01 INV-1001 MB758930 INV1001 THANH TOAN GOI VIP">
+                    <td><span class="cell-rec-id">REC-20260922-01</span></td>
+                    <td><strong class="cell-app-code">INV-1001</strong></td>
+                    <td><span class="cell-bank-code">MB758930</span></td>
+                    <td class="text-right-num">500.000 đ</td>
+                    <td class="text-right-num text-amount-real">490.000 đ</td>
+                    <td><span class="diff-tag negative">-10.000 đ</span></td>
+                    <td><div class="cell-content-box" title="Khách gõ đúng cú pháp nhưng chuyển thiếu 10.000 đ">INV1001 THANH TOAN GOI VIP</div></td>
+                    <td><span class="rec-badge badge-amount-mismatch"><i class="fa-solid fa-triangle-exclamation"></i> AMOUNT_MISMATCH</span></td>
+                    <td class="cell-time">2026-09-22 10:05:14</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Cưỡng chế kích hoạt VIP nếu thiếu ít" onclick="handleManualMatch('INV-1001', 'REC-20260922-01', this)"><i class="fa-solid fa-handshake"></i> Khớp thủ công</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Tạo phiếu hoàn tiền hoặc hủy đơn" onclick="handleRefundOrder('INV-1001', 'REC-20260922-01')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền/Hủy</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-01', 'INV-1001', 'MB758930', '500.000 đ', '490.000 đ', '-10.000 đ', 'INV1001 THANH TOAN GOI VIP', 'AMOUNT_MISMATCH', '2026-09-22 10:05:14', 'Khách hàng chuyển thiếu 10.000 đ so với giá trị đơn. Cú pháp gõ đúng mã đơn INV-1001.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 2: CODE_MISMATCH (Gõ sai mã đơn) -->
+                  <tr data-status="CODE_MISMATCH" data-diff="no_diff" data-search="REC-20260922-02 INV-1002 MB823219 HOANG NAM CK VIP THIEU MA DON">
+                    <td><span class="cell-rec-id">REC-20260922-02</span></td>
+                    <td><strong class="cell-app-code text-muted-dash">INV-1002 (?)</strong></td>
+                    <td><span class="cell-bank-code">MB823219</span></td>
+                    <td class="text-right-num">360.000 đ</td>
+                    <td class="text-right-num text-amount-real">360.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box warn-border" title="Khách gõ tên thay vì gõ mã đơn">HOANG NAM CK VIP THIEU MA DON</div></td>
+                    <td><span class="rec-badge badge-code-mismatch"><i class="fa-solid fa-font"></i> CODE_MISMATCH</span></td>
+                    <td class="cell-time">2026-09-22 10:14:30</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Gán đơn và duyệt khớp thủ công" onclick="handleManualMatch('INV-1002', 'REC-20260922-02', this)"><i class="fa-solid fa-handshake"></i> Khớp thủ công</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Hoàn tiền hoặc hủy đơn" onclick="handleRefundOrder('INV-1002', 'REC-20260922-02')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền/Hủy</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-02', 'INV-1002', 'MB823219', '360.000 đ', '360.000 đ', '0 đ', 'HOANG NAM CK VIP THIEU MA DON', 'CODE_MISMATCH', '2026-09-22 10:14:30', 'Số tiền khớp 100% (360.000 đ) nhưng nội dung khách chỉ ghi tên cá nhân mà quên gõ mã đơn INV-1002.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 3: MATCHED (Khớp hoàn toàn) -->
+                  <tr data-status="MATCHED" data-diff="no_diff" data-search="REC-20260922-03 INV-1003 MB346391 INV-1003 LE THI MAI THANH TOAN">
+                    <td><span class="cell-rec-id">REC-20260922-03</span></td>
+                    <td><strong class="cell-app-code">INV-1003</strong></td>
+                    <td><span class="cell-bank-code">MB346391</span></td>
+                    <td class="text-right-num">550.000 đ</td>
+                    <td class="text-right-num text-amount-real">550.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box">INV-1003 LE THI MAI THANH TOAN</div></td>
+                    <td><span class="rec-badge badge-matched"><i class="fa-solid fa-circle-check"></i> MATCHED</span></td>
+                    <td class="cell-time">2026-09-22 10:20:00</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-03', 'INV-1003', 'MB346391', '550.000 đ', '550.000 đ', '0 đ', 'INV-1003 LE THI MAI THANH TOAN', 'MATCHED', '2026-09-22 10:20:00', 'Giao dịch đối soát khớp hoàn hảo cả số tiền, mã đơn và cổng ngân hàng. Hệ thống đã tự động duyệt VIP.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 4: MISSING_IN_APP (Tiền vào ngân hàng nhưng App chưa có đơn) -->
+                  <tr data-status="MISSING_IN_APP" data-diff="positive" data-search="REC-20260922-04 CHUA TAO DON MB772248 TRAN VAN DUNG QUET QR CHUA TAO DON">
+                    <td><span class="cell-rec-id">REC-20260922-04</span></td>
+                    <td><strong class="cell-app-code text-red-label">CHƯA CÓ ĐƠN</strong></td>
+                    <td><span class="cell-bank-code">MB772248</span></td>
+                    <td class="text-right-num">0 đ</td>
+                    <td class="text-right-num text-amount-real">490.000 đ</td>
+                    <td><span class="diff-tag positive">+490.000 đ</span></td>
+                    <td><div class="cell-content-box error-border" title="Tiền vào tài khoản nhưng hệ thống chưa ghi nhận đơn">TRAN VAN DUNG QUET QR CHUA TAO DON</div></td>
+                    <td><span class="rec-badge badge-missing-app"><i class="fa-solid fa-circle-xmark"></i> MISSING_IN_APP</span></td>
+                    <td class="cell-time">2026-09-22 10:35:12</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Tạo đơn bổ sung & kích hoạt VIP" onclick="handleManualMatch('MỚI', 'REC-20260922-04', this)"><i class="fa-solid fa-file-circle-plus"></i> Tạo đơn &amp; Khớp</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Hoàn tiền về tài khoản nguồn" onclick="handleRefundOrder('N/A', 'REC-20260922-04')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền/Hủy</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-04', 'CHƯA CÓ ĐƠN (N/A)', 'MB772248', '0 đ', '490.000 đ', '+490.000 đ', 'TRAN VAN DUNG QUET QR CHUA TAO DON', 'MISSING_IN_APP', '2026-09-22 10:35:12', 'Tiền đã về tài khoản ngân hàng MB nhưng người dùng chưa hoàn tất bước tạo đơn trên App hoặc gián đoạn mạng.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 5: PENDING (Đang chờ đối soát) -->
+                  <tr data-status="PENDING" data-diff="no_diff" data-search="REC-20260922-05 INV-1005 MB456947 INV1005 NGUYEN VAN E">
+                    <td><span class="cell-rec-id">REC-20260922-05</span></td>
+                    <td><strong class="cell-app-code">INV-1005</strong></td>
+                    <td><span class="cell-bank-code">MB456947</span></td>
+                    <td class="text-right-num">215.000 đ</td>
+                    <td class="text-right-num text-amount-real">215.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box">INV1005 NGUYEN VAN E</div></td>
+                    <td><span class="rec-badge badge-pending"><i class="fa-solid fa-clock"></i> PENDING</span></td>
+                    <td class="cell-time">2026-09-22 10:45:00</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Khớp ngay lập tức" onclick="handleManualMatch('INV-1005', 'REC-20260922-05', this)"><i class="fa-solid fa-check"></i> Khớp ngay</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-05', 'INV-1005', 'MB456947', '215.000 đ', '215.000 đ', '0 đ', 'INV1005 NGUYEN VAN E', 'PENDING', '2026-09-22 10:45:00', 'Giao dịch đang trong hàng đợi xử lý đối soát tự động theo chu kỳ 15 phút của hệ thống PayOS.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 6: AMOUNT_MISMATCH (Chuyển thừa 20.000 đ) -->
+                  <tr data-status="AMOUNT_MISMATCH" data-diff="positive" data-search="REC-20260922-06 INV-1006 VCB91823 INV-1006 PHAM MINH TUAN CHUYEN THUA">
+                    <td><span class="cell-rec-id">REC-20260922-06</span></td>
+                    <td><strong class="cell-app-code">INV-1006</strong></td>
+                    <td><span class="cell-bank-code">VCB91823</span></td>
+                    <td class="text-right-num">680.000 đ</td>
+                    <td class="text-right-num text-amount-real">700.000 đ</td>
+                    <td><span class="diff-tag positive">+20.000 đ</span></td>
+                    <td><div class="cell-content-box">INV-1006 PHAM MINH TUAN CHUYEN THUA</div></td>
+                    <td><span class="rec-badge badge-amount-mismatch"><i class="fa-solid fa-triangle-exclamation"></i> AMOUNT_MISMATCH</span></td>
+                    <td class="cell-time">2026-09-22 11:10:20</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-match" title="Khớp đơn và kích hoạt VIP" onclick="handleManualMatch('INV-1006', 'REC-20260922-06', this)"><i class="fa-solid fa-handshake"></i> Khớp thủ công</button>
+                      <button type="button" class="btn-rec-action btn-refund" title="Hoàn phần tiền chuyển thừa 20.000đ" onclick="handleRefundOrder('INV-1006', 'REC-20260922-06')"><i class="fa-solid fa-rotate-left"></i> Hoàn tiền thừa</button>
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-06', 'INV-1006', 'VCB91823', '680.000 đ', '700.000 đ', '+20.000 đ', 'INV-1006 PHAM MINH TUAN CHUYEN THUA', 'AMOUNT_MISMATCH', '2026-09-22 11:10:20', 'Khách hàng chuyển thừa 20.000 đ so với giá trị gói VIP. Có thể kích hoạt VIP và ghi nhận hoàn lại số dư thừa.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+
+                  <!-- HÀNG 7: MATCHED (Khớp hoàn toàn) -->
+                  <tr data-status="MATCHED" data-diff="no_diff" data-search="REC-20260922-07 INV-1007 TCB18293 INV1007 DANG THU HIEN">
+                    <td><span class="cell-rec-id">REC-20260922-07</span></td>
+                    <td><strong class="cell-app-code">INV-1007</strong></td>
+                    <td><span class="cell-bank-code">TCB18293</span></td>
+                    <td class="text-right-num">350.000 đ</td>
+                    <td class="text-right-num text-amount-real">350.000 đ</td>
+                    <td><span class="diff-tag neutral">0 đ</span></td>
+                    <td><div class="cell-content-box">INV1007 DANG THU HIEN</div></td>
+                    <td><span class="rec-badge badge-matched"><i class="fa-solid fa-circle-check"></i> MATCHED</span></td>
+                    <td class="cell-time">2026-09-22 11:30:15</td>
+                    <td class="cell-action-btns">
+                      <button type="button" class="btn-rec-action btn-detail" title="Xem log so sánh 2 bên" onclick="openReconcileDetail('REC-20260922-07', 'INV-1007', 'TCB18293', '350.000 đ', '350.000 đ', '0 đ', 'INV1007 DANG THU HIEN', 'MATCHED', '2026-09-22 11:30:15', 'Giao dịch đối soát thành công 100%. Không có bất kỳ sai lệch nào.')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Chân bảng đối soát: Phân trang & thống kê -->
+            <div class="thu-table-footer">
+              <span class="thu-footer-info" id="doiSoatTableInfo">Hiển thị 7 phiên đối soát gần nhất</span>
+              <div class="thu-pagination">
+                <button type="button" class="btn-page-nav disabled" title="Trang trước"><i class="fa-solid fa-chevron-left"></i></button>
+                <button type="button" class="btn-page active">1</button>
+                <button type="button" class="btn-page">2</button>
+                <button type="button" class="btn-page">3</button>
+                <button type="button" class="btn-page-nav" title="Trang tiếp theo"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- KẾT THÚC VIEW 3: BẢNG ĐỐI SOÁT GIAO DỊCH -->
+
+        <!-- VIEW 4: CÀI ĐẶT / CẤU HÌNH TÀI KHOẢN THỤ HƯỞNG (KHỚP ẢNH MẪU 100%) -->
+        <div class="view-panel" id="caiDatView" style="display: none;">
+          <div class="setting-wrapper">
+            <!-- Tiêu đề lớn ngoài thẻ -->
+            <h1 class="setting-page-title">Cấu hình Tài khoản Thụ hưởng</h1>
+
+            <!-- Khối Card thông tin ngân hàng -->
+            <div class="setting-card">
+              <h2 class="setting-card-title">Thông tin Tài khoản Ngân hàng</h2>
+
+              <form id="settingForm" class="setting-form" onsubmit="return false;">
+                <!-- Trường 1: Ngân hàng thụ hưởng -->
+                <div class="setting-form-group">
+                  <label for="settingBankSelect" class="setting-label">Ngân hàng thụ hưởng</label>
+                  <div class="setting-select-wrapper">
+                    <select id="settingBankSelect" class="setting-select">
+                      <option value="MB" selected>MBBank - Ngân hàng Quân Đội</option>
+                      <option value="VCB">Vietcombank - Ngân hàng Ngoại Thương</option>
+                      <option value="TCB">Techcombank - Ngân hàng Kỹ Thương</option>
+                      <option value="ACB">ACB - Ngân hàng Á Châu</option>
+                      <option value="VPB">VPBank - Ngân hàng Việt Nam Thịnh Vượng</option>
+                      <option value="TPB">TPBank - Ngân hàng Tiên Phong</option>
+                      <option value="BIDV">BIDV - Ngân hàng Đầu tư &amp; Phát triển</option>
+                      <option value="VIB">VIB - Ngân hàng Quốc Tế</option>
+                      <option value="MSB">MSB - Ngân hàng Hàng Hải</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Trường 2: Số tài khoản nhận tiền -->
+                <div class="setting-form-group">
+                  <label for="settingAccountNumber" class="setting-label">Số tài khoản nhận tiền</label>
+                  <input type="text" id="settingAccountNumber" class="setting-input" placeholder="Ví dụ: 1903456789012" value="1903456789012">
+                </div>
+
+                <!-- Trường 3: Tên chủ tài khoản (In hoa không dấu) -->
+                <div class="setting-form-group">
+                  <label for="settingAccountHolder" class="setting-label">Tên chủ tài khoản (In hoa không dấu)</label>
+                  <input type="text" id="settingAccountHolder" class="setting-input" placeholder="Ví dụ: CÔNG TY TNHH ABC" value="CÔNG TY TNHH ABC" oninput="this.value = this.value.toUpperCase()">
+                </div>
+
+                <!-- Trường 4: Cú pháp tiền tố nhận diện -->
+                <div class="setting-form-group">
+                  <label for="settingPrefix" class="setting-label">Cú pháp tiền tố nhận diện</label>
+                  <input type="text" id="settingPrefix" class="setting-input" placeholder="Ví dụ: VOCAB" value="VOCAB" oninput="this.value = this.value.toUpperCase().replace(/\s+/g, '')">
+                  <p class="setting-hint">Cú pháp này sẽ được thêm vào nội dung chuyển khoản tự động để hệ thống nhận diện.</p>
+                </div>
+
+                <!-- Nút Lưu & Sinh mã VietQR (Tím gradient chuẩn ảnh mẫu) -->
+                <div class="setting-btn-row">
+                  <button type="button" class="btn-save-vietqr" id="btnSaveVietQr">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Lưu &amp; Sinh mã VietQR</span>
+                  </button>
+                </div>
+              </form>
+
+              <!-- Khối hiển thị xem trước mã VietQR tạo động (Live VietQR Preview) -->
+              <div class="vietqr-preview-box" id="vietQrPreviewBox" style="display: none;">
+                <div class="preview-header">
+                  <div class="preview-badge"><i class="fa-solid fa-circle-check"></i> Cấu Hình Thành Công &bull; Mã VietQR Đã Kích Hoạt</div>
+                  <span class="preview-sub">Mã QR này sẽ tự động hiển thị trên App khi học viên chọn thanh toán chuyển khoản ngân hàng</span>
+                </div>
+                <div class="preview-body">
+                  <div class="qr-image-wrapper">
+                    <img id="previewQrImage" src="" alt="Mã VietQR" class="qr-img">
+                  </div>
+                  <div class="qr-details-wrap">
+                    <div class="qr-info-item">
+                      <span class="qr-info-lbl">Ngân hàng thụ hưởng:</span>
+                      <strong class="qr-info-val" id="previewBankName">MBBank - Ngân hàng Quân Đội</strong>
+                    </div>
+                    <div class="qr-info-item">
+                      <span class="qr-info-lbl">Số tài khoản nhận tiền:</span>
+                      <div class="copyable-val">
+                        <strong class="qr-info-val font-mono" id="previewAccNum">1903456789012</strong>
+                        <button type="button" class="btn-copy-mini" onclick="copySettingText(document.getElementById('previewAccNum').textContent, 'Đã sao chép số tài khoản!')" title="Sao chép"><i class="fa-regular fa-copy"></i></button>
+                      </div>
+                    </div>
+                    <div class="qr-info-item">
+                      <span class="qr-info-lbl">Tên chủ tài khoản:</span>
+                      <strong class="qr-info-val" id="previewAccHolder">CÔNG TY TNHH ABC</strong>
+                    </div>
+                    <div class="qr-info-item">
+                      <span class="qr-info-lbl">Cú pháp mẫu đơn hàng:</span>
+                      <div class="copyable-val">
+                        <code class="qr-syntax-badge" id="previewSyntaxBadge">VOCAB INV1001</code>
+                        <button type="button" class="btn-copy-mini" onclick="copySettingText(document.getElementById('previewSyntaxBadge').textContent, 'Đã sao chép cú pháp chuyển khoản!')" title="Sao chép"><i class="fa-regular fa-copy"></i></button>
+                      </div>
+                    </div>
+                    <div class="qr-status-pill">
+                      <i class="fa-solid fa-bolt"></i> Hệ thống đã liên kết tự động với module Bảng Đối Soát
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- KẾT THÚC VIEW 4: CÀI ĐẶT -->
+
+  <!-- MODAL BÁO CÁO (Khi bấm nút "Báo cáo") -->
+  <div class="modal-backdrop" id="reportModalBackdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon"><i class="fa-solid fa-file-invoice"></i></div>
+          <div>
+            <h3 class="modal-title">Báo Cáo Phân Tích Cổng Thanh Toán</h3>
+            <p class="modal-subtitle">Tháng 09/2026 • Hệ thống PayGate Fintech</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="closeReportModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="report-summary-box">
+          <div class="summary-line">
+            <span>Tổng doanh thu quyết toán:</span>
+            <strong>425,800,000 VNĐ</strong>
+          </div>
+          <div class="summary-line">
+            <span>Tỷ lệ giao dịch thành công:</span>
+            <strong class="green-text">74.4% (15,280 GD)</strong>
+          </div>
+          <div class="summary-line">
+            <span>Gói mang lại doanh thu cao nhất:</span>
+            <strong class="purple-text">Gói VIP (268,200,000 VNĐ - 63.0%)</strong>
+          </div>
+          <div class="summary-line">
+            <span>Hiệu suất kích hoạt qua phễu:</span>
+            <strong class="purple-text">41.2% (41,200 thành viên VIP kích hoạt thành công)</strong>
+          </div>
+        </div>
+
+        <div class="export-format-options">
+          <label class="format-option">
+            <input type="radio" name="exportFormat" value="pdf" checked>
+            <span class="option-card">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>Xuất file PDF chi tiết</span>
+            </span>
+          </label>
+          <label class="format-option">
+            <input type="radio" name="exportFormat" value="excel">
+            <span class="option-card">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>Xuất file Excel (XLSX)</span>
+            </span>
+          </label>
+          <label class="format-option">
+            <input type="radio" name="exportFormat" value="csv">
+            <span class="option-card">
+              <i class="fa-solid fa-file-csv"></i>
+              <span>Xuất dữ liệu Raw CSV</span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="cancelReportModal">Đóng</button>
+        <button class="btn-download" id="confirmExportBtn">
+          <i class="fa-solid fa-download"></i> Tải báo cáo ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHI TIẾT ĐỐI SOÁT (SO SÁNH 2 BÊN HỆ THỐNG APP VS NGÂN HÀNG / PAYOS) -->
+  <div class="modal-backdrop" id="reconcileDetailModal">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon modal-icon-purple"><i class="fa-solid fa-scale-balanced"></i></div>
+          <div>
+            <h3 class="modal-title">Chi Tiết Log Đối Soát Giao Dịch</h3>
+            <p class="modal-subtitle">
+              Mã đối soát: <strong id="modalRecId" class="text-purple">REC-20260922-01</strong> &bull; 
+              Thời gian GD: <span id="modalRecTime">2026-09-22 10:05:14</span>
+            </p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeReconcileDetailBtn" onclick="closeReconcileDetail()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Banner trạng thái & đánh giá đối chiếu -->
+        <div class="rec-modal-status-banner">
+          <div class="status-banner-left">
+            <span class="status-banner-label">Kết quả đối soát:</span>
+            <span id="modalRecStatusBadge" class="rec-badge badge-amount-mismatch">AMOUNT_MISMATCH</span>
+          </div>
+          <div class="status-banner-right">
+            <span>Chênh lệch:</span>
+            <span id="modalDiffAmount" class="diff-tag negative">-10.000 đ</span>
+          </div>
+        </div>
+
+        <div class="rec-analysis-box" id="modalAnalysisBox">
+          <i class="fa-solid fa-circle-info"></i>
+          <span id="modalAnalysisNote">Khách hàng chuyển thiếu 10.000 đ so với giá trị đơn hàng yêu cầu. Cú pháp gõ đúng mã đơn INV-1001.</span>
+        </div>
+
+        <!-- Lưới so sánh 2 bên (Dữ liệu Hệ thống App vs Cổng Ngân hàng / PayOS) -->
+        <div class="rec-compare-grid">
+          <!-- BÊN TRÁI: DỮ LIỆU HỆ THỐNG (APP) -->
+          <div class="rec-compare-card app-side">
+            <div class="compare-card-header">
+              <div class="card-header-title">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <span>HỆ THỐNG APP PAYGATE</span>
+              </div>
+              <span class="side-tag app-tag">Đơn hàng gốc</span>
+            </div>
+            <div class="compare-card-body">
+              <div class="compare-field">
+                <span class="field-lbl">Mã đơn hệ thống:</span>
+                <span class="field-val highlight-val" id="modalAppOrderId">INV-1001</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Số tiền hệ thống yêu cầu:</span>
+                <span class="field-val amount-val" id="modalSysAmount">500.000 đ</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Gói dịch vụ đăng ký:</span>
+                <span class="field-val" id="modalPackageName">Gói Hội Viên VIP (1 Tháng)</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Trạng thái trên App:</span>
+                <span class="field-val text-amber" id="modalAppStatus"><i class="fa-solid fa-clock"></i> Chờ thanh toán</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Thời gian tạo đơn:</span>
+                <span class="field-val text-muted-val" id="modalAppCreatedAt">2026-09-22 10:04:12</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Mã khách hàng / SĐT:</span>
+                <span class="field-val text-muted-val">USER_9882 (0982***333)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BÊN PHẢI: DỮ LIỆU CỔNG NGÂN HÀNG / PAYOS -->
+          <div class="rec-compare-card bank-side">
+            <div class="compare-card-header">
+              <div class="card-header-title">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>CỔNG NGÂN HÀNG / PAYOS</span>
+              </div>
+              <span class="side-tag bank-tag">Báo có thực tế</span>
+            </div>
+            <div class="compare-card-body">
+              <div class="compare-field">
+                <span class="field-lbl">Mã GD PayOS / Bank:</span>
+                <span class="field-val font-mono text-cyan" id="modalBankRef">MB758930</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Số tiền thực nhận (Báo có):</span>
+                <span class="field-val amount-real-val" id="modalRealAmount">490.000 đ</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Nội dung CK thực tế:</span>
+                <div class="field-content-raw" id="modalRawContent">INV1001 THANH TOAN GOI VIP</div>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Ngân hàng thụ hưởng:</span>
+                <span class="field-val text-muted-val"><i class="fa-solid fa-landmark"></i> MB Bank (TK: 998829988)</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Thời gian ngân hàng ghi nhận:</span>
+                <span class="field-val text-muted-val" id="modalBankTime">2026-09-22 10:05:14</span>
+              </div>
+              <div class="compare-field">
+                <span class="field-lbl">Trạng thái PayOS / Bank:</span>
+                <span class="field-val text-emerald"><i class="fa-solid fa-circle-check"></i> Đã ghi có thành công</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hướng dẫn xử lý nghiệp vụ -->
+        <div class="rec-action-guidance" id="modalGuidanceBox">
+          <div class="guidance-title"><i class="fa-solid fa-lightbulb"></i> Khuyến nghị xử lý nghiệp vụ:</div>
+          <p class="guidance-desc" id="modalGuidanceText">
+            Khoản chênh lệch thiếu ít (-10.000 đ). Người vận hành có thể bấm <strong>[Khớp thủ công]</strong> để cưỡng chế kích hoạt gói VIP cho khách hoặc bấm <strong>[Hoàn tiền / Hủy]</strong> để tạo yêu cầu hoàn trả số tiền qua ngân hàng.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-rec-action btn-match" id="modalActionMatchBtn">
+          <i class="fa-solid fa-handshake"></i> Khớp thủ công &amp; Kích hoạt VIP
+        </button>
+        <button type="button" class="btn-rec-action btn-refund" id="modalActionRefundBtn">
+          <i class="fa-solid fa-rotate-left"></i> Hoàn tiền / Hủy giao dịch
+        </button>
+        <button type="button" class="btn-cancel" onclick="closeReconcileDetail()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Custom Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

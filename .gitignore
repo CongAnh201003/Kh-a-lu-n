@@ -1,0 +1,12 @@
+# Archives & Docs
+*.zip
+*.docx
+*.pdf
+*.jpg
+*.jpeg
+*.png
+
+# Temp / OS
+.DS_Store
+Thumbs.db
+**/scratch/

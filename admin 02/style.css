@@ -4750,6 +4750,52 @@ input:checked + .switch-slider:before {
   white-space: nowrap;
 }
 
+/* ==========================================================================
+   PLANS CATALOG & PUSH NOTIFICATIONS COMPONENT STYLES
+   ========================================================================== */
+.emoji-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.emoji-btn:hover {
+  background: #e2e8f0;
+  transform: scale(1.12);
+}
+
+.view-mode-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-mode-btn:hover {
+  color: var(--text-primary);
+}
+
+.mockup-push-banner {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mockup-push-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.plan-data-table thead th,
+.notif-data-table thead th {
+  letter-spacing: 0.04em;
+}
+
+.plan-data-table tbody tr:hover td,
+.notif-data-table tbody tr:hover td {
+  background-color: #f1f5f9 !important;
+}
+
 
 
 

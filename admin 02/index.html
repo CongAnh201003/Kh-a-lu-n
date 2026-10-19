@@ -109,13 +109,6 @@
                 <span class="nav-badge-pill" id="topicCountBadge">8 chủ đề</span>
               </a>
             </li>
-            <li class="nav-item" data-perm="exercise.view">
-              <a href="#exercises" id="navExercises" onclick="switchAdminTab('exercises')">
-                <i class="fa-solid fa-gamepad"></i>
-                <span>Quản Lý Bài Tập</span>
-                <span class="nav-badge-pill" id="exerciseCountBadge">4 dạng bài</span>
-              </a>
-            </li>
             <li class="nav-item" data-perm="media.view">
               <a href="#media-library" id="navMedia" onclick="switchAdminTab('media-library')">
                 <i class="fa-solid fa-photo-film"></i>
@@ -140,7 +133,7 @@
               <a href="#permission-groups" id="navPermGroups" onclick="switchAdminTab('permission-groups')">
                 <i class="fa-solid fa-layer-group"></i>
                 <span>1. Quản Lý Nhóm Quyền</span>
-                <span class="nav-badge-pill" style="background:rgba(16,185,129,0.2);color:#34d399;">4 nhóm</span>
+                <span class="nav-badge-pill" style="background:rgba(160,185,129,0.2);color:#34d399;">4 nhóm</span>
               </a>
             </li>
             <li class="nav-item" data-perm="admin.view">
@@ -157,10 +150,17 @@
                 <span class="nav-badge-pill" style="background:rgba(168,85,247,0.2);color:#c084fc;">5 học viên</span>
               </a>
             </li>
+            <li class="nav-item" data-perm="users.view">
+              <a href="#notifications" id="navNotifications" onclick="switchAdminTab('notifications')">
+                <i class="fa-solid fa-bell"></i>
+                <span>4. Thông Báo Đẩy Ứng Dụng</span>
+                <span class="nav-badge-pill" id="notifCountBadge" style="background:rgba(236,72,153,0.2);color:#f472b6;">6 tin</span>
+              </a>
+            </li>
             <li class="nav-item" data-perm="settings.view">
               <a href="#settings-logs" id="navSettingsLogs" onclick="switchAdminTab('settings-logs')">
                 <i class="fa-solid fa-sliders"></i>
-                <span>Cài Đặt &amp; Nhật Ký Hệ Thống</span>
+                <span>5. Cài Đặt &amp; Nhật Ký Hệ Thống</span>
               </a>
             </li>
           </ul>
@@ -297,7 +297,7 @@
           </button>
           <div class="topbar-search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="globalSearchInput" placeholder="Tìm từ vựng, học viên, mã đơn, bài tập...">
+            <input type="text" id="globalSearchInput" placeholder="Tìm từ vựng, học viên, mã đơn, gói cước, thông báo...">
           </div>
         </div>
 
@@ -651,8 +651,8 @@
               <button type="button" class="btn-action btn-outline" style="justify-content:flex-start;" onclick="switchAdminTab('topics')">
                 <i class="fa-solid fa-folder-tree" style="color:#10b981;"></i> 4. Topic Management
               </button>
-              <button type="button" class="btn-action btn-outline" style="justify-content:flex-start;" onclick="switchAdminTab('exercises')">
-                <i class="fa-solid fa-gamepad" style="color:#f59e0b;"></i> 5. Exercise Management
+              <button type="button" class="btn-action btn-outline" style="justify-content:flex-start;" onclick="switchAdminTab('notifications')">
+                <i class="fa-solid fa-bell" style="color:#f43f5e;"></i> 5. Push Notifications (Thông Báo Đẩy)
               </button>
               <button type="button" class="btn-action btn-outline" style="justify-content:flex-start;" onclick="switchAdminTab('media-library')">
                 <i class="fa-solid fa-photo-film" style="color:#ec4899;"></i> 6. Learning Content &amp; Media
@@ -910,69 +910,116 @@
         </section>
 
         <!-- ================================================================
-             MODULE 5: EXERCISE MANAGEMENT (QUẢN LÝ BÀI TẬP)
+             MODULE: PUSH NOTIFICATIONS TO MOBILE APP (QUẢN LÝ THÔNG BÁO ĐẨY)
+             Khớp 100% thiết kế giao diện từ ảnh thực tế của người dùng
              ================================================================ -->
-        <section class="view-section" id="viewExercises">
+        <section class="view-section" id="viewNotifications">
           <div class="section-header">
             <div class="section-title-group">
-              <h1><i class="fa-solid fa-gamepad" style="color:#f59e0b;"></i> 5. Quản Lý Bài Tập &amp; Trò Chơi</h1>
-              <p>Cấu hình 4 dạng bài tập: Game Ghép Từ, Luyện Phát Âm AI, Nghe Chép Dictation &amp; Sắp Xếp Câu</p>
+              <h1><i class="fa-solid fa-bell" style="color:#f43f5e;"></i> Thông Báo Đẩy Đến Ứng Dụng (Push Notification)</h1>
+              <p>Gửi lời nhắc học từ vựng hàng ngày, cập nhật chủ đề mới và ưu đãi nâng cấp VIP</p>
             </div>
             <div class="section-actions">
-              <button type="button" class="btn-action btn-primary" onclick="openCreateExerciseModal()">
-                <i class="fa-solid fa-plus"></i> Tạo Bộ Bài Tập
+              <button type="button" class="btn-action btn-success" style="background:#10b981;color:#ffffff;border:none;box-shadow:0 4px 14px rgba(16,185,129,0.35);padding:10px 20px;font-weight:700;font-size:0.88rem;display:inline-flex;align-items:center;gap:8px;" onclick="openComposeNotificationModal()">
+                <i class="fa-solid fa-paper-plane"></i> Soạn &amp; Gửi Thông Báo Mới
               </button>
             </div>
           </div>
 
-          <!-- Bộ lọc dạng bài -->
-          <div class="module-tabs-nav">
-            <button type="button" class="module-tab-btn active" onclick="filterExerciseTab('ALL', this)">
-              <i class="fa-solid fa-list-check"></i> Tất cả bài tập (<span id="countAllExercises">4</span>)
-            </button>
-            <button type="button" class="module-tab-btn" onclick="filterExerciseTab('WORD_MATCH', this)">
-              <i class="fa-solid fa-gamepad"></i> Game Ghép Từ
-            </button>
-            <button type="button" class="module-tab-btn" onclick="filterExerciseTab('PRONUNCIATION', this)">
-              <i class="fa-solid fa-microphone"></i> Luyện Phát Âm
-            </button>
-            <button type="button" class="module-tab-btn" onclick="filterExerciseTab('DICTATION', this)">
-              <i class="fa-solid fa-headphones"></i> Nghe &amp; Viết (Dictation)
-            </button>
-            <button type="button" class="module-tab-btn" onclick="filterExerciseTab('SENTENCE_ORDER', this)">
-              <i class="fa-solid fa-arrow-down-a-z"></i> Sắp Xếp Câu
-            </button>
-          </div>
-
-          <!-- Bộ Lọc Nâng Cao Cho Bài Tập -->
-          <div class="filter-toolbar-card" style="margin-top:12px;margin-bottom:18px;">
-            <div class="filter-controls-row">
-              <div class="filter-search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="exerciseSearchInput" placeholder="Tìm tên bài tập, câu hỏi, từ vựng liên quan..." onkeyup="filterExercisesGrid()">
+          <!-- KPI Summary Cards -->
+          <div class="kpi-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:16px;margin-bottom:20px;">
+            <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #10b981;border-radius:12px;box-shadow:var(--shadow-card);">
+              <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                <span>Tổng Thông Báo Đã Gửi</span>
+                <i class="fa-solid fa-paper-plane" style="color:#10b981;"></i>
               </div>
-              <select id="exerciseFilterTopic" class="form-select filter-select" onchange="filterExercisesGrid()">
-                <option value="">Tất cả chủ đề bài tập</option>
-                <option value="Business & Finance">Business &amp; Finance</option>
-                <option value="Animals & Nature">Animals &amp; Nature</option>
-                <option value="Food & Culinary">Food &amp; Culinary</option>
-                <option value="Travel">Travel &amp; Exploration</option>
-              </select>
-              <select id="exerciseFilterDifficulty" class="form-select filter-select" onchange="filterExercisesGrid()">
-                <option value="">Tất cả độ khó</option>
-                <option value="Dễ">Dễ (Easy)</option>
-                <option value="Trung bình">Trung bình (Medium)</option>
-                <option value="Khó">Khó (Hard)</option>
-              </select>
-              <button type="button" class="btn-filter-reset" onclick="resetExerciseFilters()">
-                <i class="fa-solid fa-rotate-left"></i> Đặt lại
-              </button>
-              <span class="filter-badge-count" id="exerciseFilterResultBadge">4 bộ bài tập</span>
+              <div class="kpi-value" id="kpiNotifTotal" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-top:6px;">18 bản tin</div>
+              <div class="kpi-subtext" style="font-size:0.75rem;color:#10b981;margin-top:4px;"><i class="fa-solid fa-arrow-trend-up"></i> +3 chiến dịch tuần này</div>
+            </div>
+
+            <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #3b82f6;border-radius:12px;box-shadow:var(--shadow-card);">
+              <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                <span>Tỷ Lệ Mở App Trung Bình</span>
+                <i class="fa-solid fa-arrow-pointer" style="color:#3b82f6;"></i>
+              </div>
+              <div class="kpi-value" id="kpiNotifOpenRate" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-top:6px;">45.8%</div>
+              <div class="kpi-subtext" style="font-size:0.75rem;color:#3b82f6;margin-top:4px;"><i class="fa-solid fa-circle-check"></i> Cao hơn 12.4% mức TB ngành</div>
+            </div>
+
+            <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #8b5cf6;border-radius:12px;box-shadow:var(--shadow-card);">
+              <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                <span>Tổng Lượt Mở Thực Tế</span>
+                <i class="fa-solid fa-mobile-screen-button" style="color:#8b5cf6;"></i>
+              </div>
+              <div class="kpi-value" id="kpiNotifTotalOpens" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-top:6px;">15,690</div>
+              <div class="kpi-subtext" style="font-size:0.75rem;color:#8b5cf6;margin-top:4px;"><i class="fa-solid fa-fire"></i> Lượt mở app từ Push</div>
+            </div>
+
+            <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #f59e0b;border-radius:12px;box-shadow:var(--shadow-card);">
+              <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                <span>Tỷ Lệ Gửi Thành Công</span>
+                <i class="fa-solid fa-tower-broadcast" style="color:#f59e0b;"></i>
+              </div>
+              <div class="kpi-value" id="kpiNotifDelivery" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-top:6px;">99.2%</div>
+              <div class="kpi-subtext" style="font-size:0.75rem;color:#10b981;margin-top:4px;"><i class="fa-solid fa-bolt"></i> Gateway FCM &amp; APNs ổn định</div>
             </div>
           </div>
 
-          <div class="exercises-grid" id="exercisesGridContainer">
-            <!-- Rendered dynamically -->
+          <!-- Table Container -->
+          <div class="table-container">
+            <div class="table-header-bar">
+              <div class="filter-controls-row">
+                <div class="filter-search-box">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="notifSearchInput" placeholder="Tìm tiêu đề, nội dung thông báo..." onkeyup="filterPushNotificationsTable()">
+                </div>
+                <select id="notifFilterType" class="form-select filter-select" onchange="filterPushNotificationsTable()">
+                  <option value="">Tất cả loại tin</option>
+                  <option value="REMINDER">REMINDER (Lời nhắc học tập)</option>
+                  <option value="CONTENT_UPDATE">CONTENT_UPDATE (Nội dung mới)</option>
+                  <option value="PROMOTION">PROMOTION (Khuyến mãi / Ưu đãi)</option>
+                  <option value="SYSTEM">SYSTEM (Hệ thống)</option>
+                </select>
+                <select id="notifFilterAudience" class="form-select filter-select" onchange="filterPushNotificationsTable()">
+                  <option value="">Tất cả đối tượng</option>
+                  <option value="STREAK_GT_3">Streak > 3 ngày</option>
+                  <option value="ALL">Tất cả người dùng (Free, Premium, VIP)</option>
+                  <option value="EXPIRING_SOON">Học viên Free &amp; Premium sắp hết hạn</option>
+                  <option value="WEEKLY_GOAL">Học viên đạt mục tiêu tuần</option>
+                </select>
+                <select id="notifFilterStatus" class="form-select filter-select" onchange="filterPushNotificationsTable()">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="SENT">ĐÃ GỬI</option>
+                  <option value="SCHEDULED">LÊN LỊCH</option>
+                  <option value="DRAFT">BẢN NHÁP</option>
+                </select>
+                <button type="button" class="btn-filter-reset" onclick="resetPushNotificationFilters()">
+                  <i class="fa-solid fa-rotate-left"></i> Đặt lại
+                </button>
+                <span class="filter-badge-count" id="notifFilterCountBadge">6 thông báo</span>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-data-table notif-data-table">
+                <thead>
+                  <tr>
+                    <th style="width:115px;">MÃ TIN</th>
+                    <th style="width:260px;">TIÊU ĐỀ THÔNG BÁO</th>
+                    <th>NỘI DUNG TIN NHẮN</th>
+                    <th style="width:230px;">ĐỐI TƯỢNG NHẬN</th>
+                    <th style="width:140px;">LOẠI TIN</th>
+                    <th style="width:165px;">THỜI GIAN GỬI</th>
+                    <th style="width:180px;">TỶ LỆ MỞ APP</th>
+                    <th style="width:115px;">TRẠNG THÁI</th>
+                    <th style="width:125px;text-align:right;">THAO TÁC</th>
+                  </tr>
+                </thead>
+                <tbody id="pushNotificationsTableBody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
@@ -1913,10 +1960,115 @@
             </button>
           </div>
 
-          <!-- Subtab 1: Plans Catalog -->
+          <!-- Subtab 1: Plans Catalog (Dạng Bảng & Thẻ Quản Lý Gói Cước) -->
           <div class="module-tab-panel active" id="subpanelPlans">
-            <div class="plan-cards-grid" id="planCardsGrid">
-              <!-- Rendered dynamically -->
+            <!-- KPI Summary Cards for Plans -->
+            <div class="kpi-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:16px;margin-bottom:20px;">
+              <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #eab308;border-radius:12px;box-shadow:var(--shadow-card);">
+                <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                  <span>Tổng Gói Cước Hệ Thống</span>
+                  <i class="fa-solid fa-crown" style="color:#eab308;"></i>
+                </div>
+                <div class="kpi-value" id="statPlansTotal" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-top:6px;">5 gói</div>
+                <div class="kpi-subtext" style="font-size:0.75rem;color:#10b981;margin-top:4px;"><i class="fa-solid fa-tags"></i> Đầy đủ phân khúc Free &amp; VIP</div>
+              </div>
+
+              <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #10b981;border-radius:12px;box-shadow:var(--shadow-card);">
+                <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                  <span>Gói Đang Mở Bán (Active)</span>
+                  <i class="fa-solid fa-circle-check" style="color:#10b981;"></i>
+                </div>
+                <div class="kpi-value" id="statPlansActive" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-top:6px;">5 gói</div>
+                <div class="kpi-subtext" style="font-size:0.75rem;color:#10b981;margin-top:4px;"><i class="fa-solid fa-cart-shopping"></i> Học viên có thể mua ngay</div>
+              </div>
+
+              <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #64748b;border-radius:12px;box-shadow:var(--shadow-card);">
+                <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                  <span>Gói Tạm Dừng Bán</span>
+                  <i class="fa-solid fa-circle-pause" style="color:#64748b;"></i>
+                </div>
+                <div class="kpi-value" id="statPlansInactive" style="font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-top:6px;">0 gói</div>
+                <div class="kpi-subtext" style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;"><i class="fa-solid fa-shield-halved"></i> Không bị gián đoạn</div>
+              </div>
+
+              <div class="kpi-card" style="padding:16px 20px;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #8b5cf6;border-radius:12px;box-shadow:var(--shadow-card);">
+                <div class="kpi-header" style="font-size:0.8rem;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+                  <span>Gói VIP Phổ Biến Nhất</span>
+                  <i class="fa-solid fa-fire" style="color:#8b5cf6;"></i>
+                </div>
+                <div class="kpi-value" style="font-size:1.25rem;font-weight:800;color:var(--text-primary);margin-top:6px;">VIP 1 Tháng</div>
+                <div class="kpi-subtext" style="font-size:0.75rem;color:#8b5cf6;margin-top:4px;"><i class="fa-solid fa-chart-line"></i> Chiếm 62% doanh thu</div>
+              </div>
+            </div>
+
+            <!-- Table & Filter Bar -->
+            <div class="table-container">
+              <div class="table-header-bar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+                <div class="filter-controls-row" style="flex:1;min-width:300px;">
+                  <div class="filter-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="planSearchInput" placeholder="Tìm tên gói, mã gói, quyền lợi..." onkeyup="filterPlansCatalog()">
+                  </div>
+                  <select id="planFilterStatus" class="form-select filter-select" onchange="filterPlansCatalog()">
+                    <option value="">Tất cả trạng thái bán</option>
+                    <option value="ACTIVE">Đang bán (Active)</option>
+                    <option value="INACTIVE">Tạm dừng (Inactive)</option>
+                  </select>
+                  <select id="planFilterBilling" class="form-select filter-select" onchange="filterPlansCatalog()">
+                    <option value="">Tất cả chu kỳ</option>
+                    <option value="Tháng">Theo Tháng (30 ngày)</option>
+                    <option value="Năm">Theo Năm (365 ngày)</option>
+                    <option value="Vĩnh viễn">Trọn đời / Vĩnh viễn</option>
+                  </select>
+                  <button type="button" class="btn-filter-reset" onclick="resetPlanFilters()">
+                    <i class="fa-solid fa-rotate-left"></i> Đặt lại
+                  </button>
+                  <span class="filter-badge-count" id="planFilterCountBadge">5 gói cước</span>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <!-- View Switcher -->
+                  <div class="view-mode-toggle-group" style="display:inline-flex;background:#f1f5f9;padding:3px;border-radius:8px;border:1px solid #e2e8f0;">
+                    <button type="button" class="view-mode-btn active" id="btnPlanTableView" onclick="switchPlanViewMode('table')" title="Chế độ bảng dữ liệu" style="padding:6px 12px;border:none;border-radius:6px;background:#ffffff;color:var(--text-primary);font-size:0.8rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+                      <i class="fa-solid fa-table-list"></i> Dạng Bảng
+                    </button>
+                    <button type="button" class="view-mode-btn" id="btnPlanCardView" onclick="switchPlanViewMode('cards')" title="Chế độ thẻ giao diện" style="padding:6px 12px;border:none;border-radius:6px;background:transparent;color:var(--text-muted);font-size:0.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                      <i class="fa-solid fa-table-cells-large"></i> Dạng Thẻ
+                    </button>
+                  </div>
+
+                  <!-- Nút Thêm Gói Cước Mới -->
+                  <button type="button" class="btn-action btn-primary" onclick="openAddPlanModal()" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;font-weight:700;">
+                    <i class="fa-solid fa-plus"></i> Thêm Gói Cước Mới
+                  </button>
+                </div>
+              </div>
+
+              <!-- View 1: Bảng Dữ Liệu Gói Cước (Plans Table) -->
+              <div id="planTableViewContainer" class="table-responsive">
+                <table class="admin-data-table plan-data-table">
+                  <thead>
+                    <tr>
+                      <th style="width:135px;">MÃ GÓI</th>
+                      <th style="width:230px;">TÊN GÓI CƯỚC</th>
+                      <th style="width:140px;">GIÁ NIÊM YẾT</th>
+                      <th style="width:160px;">CHU KỲ / HẠN DÙNG</th>
+                      <th>GIỚI HẠN &amp; ĐẶC QUYỀN AI</th>
+                      <th style="width:90px;text-align:center;">THỨ TỰ</th>
+                      <th style="width:125px;text-align:center;">TRẠNG THÁI</th>
+                      <th style="width:180px;text-align:right;">THAO TÁC</th>
+                    </tr>
+                  </thead>
+                  <tbody id="plansTableBody">
+                    <!-- Rendered dynamically -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- View 2: Thẻ Gói Cước (Plans Cards) -->
+              <div class="plan-cards-grid" id="planCardsGrid" style="display:none;padding:18px;">
+                <!-- Rendered dynamically -->
+              </div>
             </div>
           </div>
 
@@ -3014,18 +3166,277 @@
     </div>
   </div>
 
-  <!-- MODAL: PREVIEW BÀI TẬP TƯƠNG TÁC (INTERACTIVE EXERCISE PREVIEW) -->
-  <div class="modal-backdrop" id="exercisePreviewModal">
-    <div class="modal-dialog modal-md">
+  <!-- ====================================================================
+       MODALS CHO QUẢN LÝ GÓI CƯỚC (PLANS CRUD MODALS)
+       ==================================================================== -->
+  <!-- MODAL: THÊM / CHỈNH SỬA GÓI CƯỚC -->
+  <div class="modal-backdrop" id="modalPlanForm">
+    <div class="modal-card modal-lg" style="max-width:780px;">
       <div class="modal-header">
-        <h3 id="exercisePreviewTitle"><i class="fa-solid fa-gamepad"></i> Trải Nghiệm Thử Bài Tập</h3>
-        <button type="button" class="modal-close-btn" onclick="closeModal('exercisePreviewModal')">&times;</button>
+        <h3 id="planFormModalTitle"><i class="fa-solid fa-crown" style="color:#eab308;"></i> Thêm Gói Cước Mới</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modalPlanForm')">&times;</button>
       </div>
-      <div class="modal-body" id="exercisePreviewBody">
+      <form id="planFormElement" onsubmit="savePlanForm(event)">
+        <input type="hidden" id="planFormMode" value="create">
+        <input type="hidden" id="planFormTargetId" value="">
+        <div class="modal-body" style="padding:22px;">
+          <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div class="form-group">
+              <label class="form-label">Mã Gói Cước (Code) <span class="required">*</span></label>
+              <input type="text" id="planInputCode" class="form-input mono-code" required placeholder="Ví dụ: VIP_6M, PREMIUM_1Y" style="text-transform:uppercase;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tên Gói Cước Hiển Thị <span class="required">*</span></label>
+              <input type="text" id="planInputName" class="form-input" required placeholder="Ví dụ: Gói VIP Siêu Cấp 6 Tháng">
+            </div>
+          </div>
+
+          <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div class="form-group">
+              <label class="form-label">Giá Niêm Yết (VNĐ) <span class="required">*</span></label>
+              <input type="number" id="planInputPrice" class="form-input" required placeholder="299000" min="0" step="1000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Chu Kỳ Thanh Toán <span class="required">*</span></label>
+              <input type="text" id="planInputBillingPeriod" class="form-input" required placeholder="Ví dụ: 6 Tháng (180 ngày)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Thời Hạn Sử Dụng (Ngày) <span class="required">*</span></label>
+              <input type="number" id="planInputDurationDays" class="form-input" required placeholder="180" min="1">
+            </div>
+          </div>
+
+          <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div class="form-group">
+              <label class="form-label">Huy Hiệu Khuyến Mãi (Badge)</label>
+              <input type="text" id="planInputDiscountBadge" class="form-input" placeholder="Ví dụ: Tiết kiệm 40% 🔥">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Thứ Tự Hiển Thị (Order)</label>
+              <input type="number" id="planInputDisplayOrder" class="form-input" value="1" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trạng Thái Bán</label>
+              <select id="planInputStatus" class="form-select">
+                <option value="ACTIVE">Đang bán (Active)</option>
+                <option value="INACTIVE">Tạm dừng (Inactive)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:14px;">
+            <div style="font-size:0.84rem;font-weight:700;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+              <i class="fa-solid fa-sliders" style="color:#2563eb;"></i> Cấu Hình Giới Hạn &amp; Đặc Quyền AI
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-group">
+                <label class="form-label" style="font-size:0.78rem;">Lượt Tạo Truyện AI Story / Ngày</label>
+                <input type="number" id="planInputAiStories" class="form-input" value="50" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size:0.78rem;">Số Chủ Đề Từ Vựng Mở Khóa</label>
+                <input type="number" id="planInputUnlockedTopics" class="form-input" value="8" min="1">
+              </div>
+            </div>
+            <div style="display:flex;gap:24px;margin-top:10px;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;cursor:pointer;">
+                <input type="checkbox" id="planInputPronounceAi" checked style="accent-color:#2563eb;width:16px;height:16px;">
+                <span>Hỗ trợ Chấm Điểm Phát Âm AI</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;cursor:pointer;">
+                <input type="checkbox" id="planInputAudioOffline" checked style="accent-color:#2563eb;width:16px;height:16px;">
+                <span>Cho phép Tải Audio Học Offline</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">Mô Tả Ngắn Gọn</label>
+            <input type="text" id="planInputDesc" class="form-input" placeholder="Mô tả tóm tắt lợi ích nổi bật của gói cước">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Danh Sách Tính Năng &amp; Đặc Quyền (Mỗi dòng 1 quyền lợi) <span class="required">*</span></label>
+            <textarea id="planInputFeatures" class="form-textarea" rows="4" required placeholder="Mở khóa toàn bộ từ vựng&#10;Flashcard Spaced Repetition thông minh&#10;Chấm phát âm AI chuẩn người bản xứ&#10;Đồng bộ trên mọi thiết bị"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding:14px 22px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end;gap:10px;">
+          <button type="button" class="btn-action btn-outline" onclick="closeModal('modalPlanForm')">Hủy Bỏ</button>
+          <button type="submit" class="btn-action btn-primary" style="padding:9px 20px;font-weight:700;">
+            <i class="fa-solid fa-save"></i> Lưu Gói Cước
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: XEM CHI TIẾT GÓI CƯỚC -->
+  <div class="modal-backdrop" id="modalPlanDetail">
+    <div class="modal-card modal-md" style="max-width:620px;">
+      <div class="modal-header">
+        <h3 id="planDetailTitle"><i class="fa-solid fa-crown" style="color:#eab308;"></i> Chi Tiết Gói Cước</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modalPlanDetail')">&times;</button>
+      </div>
+      <div class="modal-body" id="planDetailBody" style="padding:22px;">
         <!-- Rendered dynamically -->
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-action btn-outline" onclick="closeModal('exercisePreviewModal')">Đóng Preview</button>
+      <div class="modal-footer" style="padding:14px 22px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end;">
+        <button type="button" class="btn-action btn-outline" onclick="closeModal('modalPlanDetail')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODALS CHO QUẢN LÝ THÔNG BÁO ĐẨY (PUSH NOTIFICATIONS TO MOBILE APP)
+       ==================================================================== -->
+  <!-- MODAL: SOẠN & GỬI THÔNG BÁO MỚI (CÓ LIVE SMARTPHONE MOCKUP PREVIEW) -->
+  <div class="modal-backdrop" id="modalComposeNotification">
+    <div class="modal-card modal-lg" style="max-width:920px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-paper-plane" style="color:#10b981;"></i> Soạn &amp; Gửi Thông Báo Đẩy Đến Ứng Dụng (Push Notification)</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modalComposeNotification')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:22px;">
+        <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px;align-items:start;">
+          <!-- Cột Trái: Form Soạn Thảo -->
+          <form id="composeNotifForm" onsubmit="event.preventDefault();sendPushNotification('SENT');">
+            <div class="form-group mb-3">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <label class="form-label" style="margin:0;">Tiêu Đề Thông Báo <span class="required">*</span></label>
+                <!-- Quick emoji buttons -->
+                <div style="display:flex;gap:4px;">
+                  <button type="button" class="emoji-btn" onclick="insertEmojiToNotif('⏰')" title="Thêm icon">⏰</button>
+                  <button type="button" class="emoji-btn" onclick="insertEmojiToNotif('✨')" title="Thêm icon">✨</button>
+                  <button type="button" class="emoji-btn" onclick="insertEmojiToNotif('🔥')" title="Thêm icon">🔥</button>
+                  <button type="button" class="emoji-btn" onclick="insertEmojiToNotif('🎉')" title="Thêm icon">🎉</button>
+                  <button type="button" class="emoji-btn" onclick="insertEmojiToNotif('📢')" title="Thêm icon">📢</button>
+                  <button type="button" class="emoji-btn" onclick="insertEmojiToNotif('⚡')" title="Thêm icon">⚡</button>
+                  <button type="button" class="emoji-btn" onclick="insertEmojiToNotif('🔔')" title="Thêm icon">🔔</button>
+                </div>
+              </div>
+              <input type="text" id="composeNotifTitle" class="form-input" required placeholder="Ví dụ: ⏰ Đã đến giờ học từ vựng hôm nay!" oninput="updateMobilePreviewRealtime()">
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div class="form-group">
+                <label class="form-label">Loại Thông Báo <span class="required">*</span></label>
+                <select id="composeNotifType" class="form-select" onchange="updateMobilePreviewRealtime()">
+                  <option value="REMINDER">REMINDER (Lời nhắc học tập)</option>
+                  <option value="CONTENT_UPDATE">CONTENT_UPDATE (Nội dung mới)</option>
+                  <option value="PROMOTION">PROMOTION (Khuyến mãi / Ưu đãi)</option>
+                  <option value="SYSTEM">SYSTEM (Hệ thống)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Đối Tượng Nhận <span class="required">*</span></label>
+                <select id="composeNotifAudience" class="form-select">
+                  <option value="ALL">Tất cả người dùng (~15,850 học viên)</option>
+                  <option value="STREAK_GT_3">Toàn bộ học viên Streak > 3 ngày (~4,200)</option>
+                  <option value="EXPIRING_SOON">Học viên Free &amp; Premium sắp hết hạn (~2,650)</option>
+                  <option value="WEEKLY_GOAL">Học viên đạt mục tiêu tuần (~3,400)</option>
+                  <option value="INACTIVE_TODAY">Học viên chưa vào học hôm nay (~5,100)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <label class="form-label" style="margin:0;">Nội Dung Tin Nhắn <span class="required">*</span></label>
+                <span style="font-size:0.75rem;color:var(--text-muted);"><span id="notifCharCount">0</span>/120 ký tự</span>
+              </div>
+              <textarea id="composeNotifMessage" class="form-textarea" rows="3" required placeholder="Ví dụ: Bạn còn 5 từ vựng chủ đề Business cần ôn tập để duy trì chuỗi Streak 25 ngày. Học ngay nhé!" oninput="updateMobilePreviewRealtime()"></textarea>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+              <div class="form-group">
+                <label class="form-label">Hành Động Khi Chạm (Deep Link)</label>
+                <select id="composeNotifScreen" class="form-select">
+                  <option value="flashcard_review">Mở Luyện Spaced Repetition (Streak)</option>
+                  <option value="topic_environment">Mở Danh Mục Từ Vựng Chủ Đề</option>
+                  <option value="subscription_upgrade">Mở Màn Hình Nâng Cấp VIP</option>
+                  <option value="rewards_center">Mở Trung Tâm Thưởng &amp; Huy Hiệu</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Thời Gian Gửi</label>
+                <select id="composeNotifScheduleType" class="form-select" onchange="toggleScheduleTimeInput(this.value)">
+                  <option value="NOW">Gửi ngay lập tức</option>
+                  <option value="SCHEDULED">Lên lịch gửi vào giờ vàng</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="scheduleTimeGroup" style="display:none;background:#f8fafc;padding:12px;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:16px;">
+              <label class="form-label" style="font-size:0.78rem;">Chọn Ngày &amp; Giờ Đẩy Thông Báo</label>
+              <input type="datetime-local" id="composeNotifDateTime" class="form-input" value="2026-10-19T20:00">
+            </div>
+
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+              <button type="button" class="btn-action btn-outline" onclick="closeModal('modalComposeNotification')">Hủy</button>
+              <button type="button" class="btn-action btn-outline" onclick="sendPushNotification('DRAFT')">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu Nháp
+              </button>
+              <button type="submit" class="btn-action btn-success" style="background:#10b981;color:#ffffff;border:none;padding:9px 20px;font-weight:700;">
+                <i class="fa-solid fa-paper-plane"></i> Gửi Đến Ứng Dụng Ngay
+              </button>
+            </div>
+          </form>
+
+          <!-- Cột Phải: Live Smartphone Push Notification Mockup -->
+          <div style="background:#0f172a;border-radius:32px;padding:24px 18px;box-shadow:0 16px 36px rgba(0,0,0,0.3);position:relative;color:#ffffff;">
+            <!-- Notch / Dynamic Island -->
+            <div style="width:110px;height:24px;background:#000000;border-radius:12px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;gap:6px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#1e293b;"></div>
+              <div style="width:10px;height:10px;border-radius:50%;background:#0284c7;"></div>
+            </div>
+
+            <div style="text-align:center;margin-bottom:18px;">
+              <div style="font-size:2.2rem;font-weight:300;letter-spacing:-1px;">20:45</div>
+              <div style="font-size:0.75rem;color:#94a3b8;">Thứ Hai, 19 tháng 10</div>
+            </div>
+
+            <!-- The Push Banner Card -->
+            <div class="mockup-push-banner" style="background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);border-radius:18px;padding:14px;color:#0f172a;box-shadow:0 8px 24px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.4);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:24px;height:24px;background:#173d8f;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:0.75rem;">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                  </div>
+                  <span style="font-size:0.78rem;font-weight:700;color:#1e293b;letter-spacing:0.02em;">LINGUAPAY</span>
+                  <span style="font-size:0.68rem;color:#64748b;">• vừa xong</span>
+                </div>
+                <span id="mockupTypeBadge" style="font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;background:#eff6ff;color:#2563eb;">REMINDER</span>
+              </div>
+              <div id="mockupNotifTitle" style="font-size:0.86rem;font-weight:700;color:#0f172a;margin-bottom:3px;line-height:1.35;">
+                ⏰ Đã đến giờ học từ vựng hôm nay!
+              </div>
+              <div id="mockupNotifBody" style="font-size:0.78rem;color:#334155;line-height:1.4;">
+                Bạn còn 5 từ vựng chủ đề Business cần ôn tập để duy trì chuỗi Streak 25 ngày. Học ngay nhé!
+              </div>
+            </div>
+
+            <div style="text-align:center;margin-top:24px;font-size:0.72rem;color:#94a3b8;">
+              <i class="fa-solid fa-mobile-screen"></i> Xem trước hiển thị trên App học viên
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PREVIEW CHI TIẾT THÔNG BÁO TRÊN SMARTPHONE -->
+  <div class="modal-backdrop" id="modalNotifPreview">
+    <div class="modal-card modal-md" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 id="notifPreviewHeaderTitle"><i class="fa-solid fa-mobile-screen"></i> Chi Tiết &amp; Xem Trước Thông Báo</h3>
+        <button type="button" class="modal-close-btn" onclick="closeModal('modalNotifPreview')">&times;</button>
+      </div>
+      <div class="modal-body" id="notifPreviewBody" style="padding:22px;">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer" style="padding:14px 22px;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+        <span id="notifPreviewStatusBadge"></span>
+        <button type="button" class="btn-action btn-outline" onclick="closeModal('modalNotifPreview')">Đóng</button>
       </div>
     </div>
   </div>

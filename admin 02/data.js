@@ -1577,6 +1577,33 @@ let SUBSCRIPTION_PLANS = [
       audioOffline: true,
       pronounceAiCheck: true
     }
+  },
+  {
+    id: 'plan_vip_lifetime',
+    code: 'VIP_LIFETIME',
+    name: 'Gói VIP Trọn Đời (Lifetime)',
+    description: 'Sở hữu vĩnh viễn toàn bộ tính năng cao cấp nhất của LinguaPay.',
+    price: 1290000,
+    priceFormatted: '1.290.000 ₫',
+    currency: 'VND',
+    billingPeriod: 'Trọn đời (Vĩnh viễn)',
+    durationDays: 9999,
+    status: 'ACTIVE',
+    displayOrder: 5,
+    discountBadge: 'Đặc Quyền Cao Cấp 👑',
+    features: [
+      'Toàn quyền truy cập mọi tính năng học tập trọn đời không giới hạn',
+      'Không giới hạn lượt tạo truyện học từ vựng bằng AI mỗi ngày',
+      'Công nghệ AI chấm điểm phát âm & phân tích khẩu hình chuẩn xác',
+      'Mở khóa toàn bộ hơn 30 chủ đề từ vựng chuyên ngành trong tương lai',
+      'Được gán Huy hiệu Học viên Danh Dự VIP Vĩnh Viễn trên App'
+    ],
+    limits: {
+      aiStoriesPerDay: 999,
+      unlockedTopics: 99,
+      audioOffline: true,
+      pronounceAiCheck: true
+    }
   }
 ];
 
@@ -1651,6 +1678,103 @@ let USER_SUBSCRIPTIONS = [
     autoRenew: false,
     latestTxnId: null,
     createdAt: '2026-09-01 08:00:00'
+  }
+];
+
+// ==========================================================================
+// 9.1. DANH SÁCH THÔNG BÁO ĐẨY ĐẾN ỨNG DỤNG (PUSH NOTIFICATION MANAGEMENT)
+// Gửi lời nhắc học từ vựng hàng ngày, cập nhật chủ đề mới và ưu đãi nâng cấp VIP
+// ==========================================================================
+let PUSH_NOTIFICATIONS = [
+  {
+    id: 'notif-01',
+    code: 'NOTIF-01',
+    title: '⏰ Đã đến giờ học từ vựng hôm nay!',
+    message: 'Bạn còn 5 từ vựng chủ đề Business cần ôn tập để duy trì chuỗi Streak 25 ngày. Học ngay nhé!',
+    targetAudience: 'Toàn bộ học viên đang có Streak > 3 ngày',
+    targetFilter: 'STREAK_GT_3',
+    type: 'REMINDER',
+    sentAt: '2026-09-22 20:00:00',
+    openRate: '42.8%',
+    openCount: 4120,
+    totalSent: 9626,
+    status: 'SENT',
+    targetScreen: 'flashcard_review'
+  },
+  {
+    id: 'notif-02',
+    code: 'NOTIF-02',
+    title: '✨ Ra mắt 20 từ vựng chủ đề Môi Trường & Sinh Thái',
+    message: 'Bộ từ vựng Environment vừa được bổ sung kèm hình ảnh minh họa và công nghệ AI luyện phát âm cực đỉnh.',
+    targetAudience: 'Tất cả người dùng (Free, Premium, VIP)',
+    targetFilter: 'ALL',
+    type: 'CONTENT_UPDATE',
+    sentAt: '2026-09-20 09:30:00',
+    openRate: '56.4%',
+    openCount: 8920,
+    totalSent: 15815,
+    status: 'SENT',
+    targetScreen: 'topic_environment'
+  },
+  {
+    id: 'notif-03',
+    code: 'NOTIF-03',
+    title: '🔥 Ưu đãi nâng cấp VIP chỉ 60.000 đ / tháng!',
+    message: 'Mở khóa không giới hạn tính năng Luyện phát âm AI và AI Story Creator để bứt phá tiếng Anh.',
+    targetAudience: 'Học viên Free & Premium sắp hết hạn',
+    targetFilter: 'EXPIRING_SOON',
+    type: 'PROMOTION',
+    sentAt: '2026-09-18 14:15:00',
+    openRate: '38.2%',
+    openCount: 2650,
+    totalSent: 6937,
+    status: 'SENT',
+    targetScreen: 'subscription_upgrade'
+  },
+  {
+    id: 'notif-04',
+    code: 'NOTIF-04',
+    title: '🎉 Chúc mừng bạn đã hoàn thành mục tiêu tuần!',
+    message: 'Bạn đã thành thạo 42 từ vựng mới tuần qua. Bấm vào đây để nhận 50 Huy Hiệu Xu Thưởng!',
+    targetAudience: 'Học viên đạt mục tiêu tuần',
+    targetFilter: 'WEEKLY_GOAL',
+    type: 'SYSTEM',
+    sentAt: '2026-09-15 18:00:00',
+    openRate: '61.2%',
+    openCount: 3400,
+    totalSent: 5555,
+    status: 'SENT',
+    targetScreen: 'rewards_center'
+  },
+  {
+    id: 'notif-05',
+    code: 'NOTIF-05',
+    title: '⚡ Cập nhật Spaced Repetition 2.0',
+    message: 'Thuật toán lặp lại ngắt quãng AI giúp bạn nhớ từ vựng lâu gấp 3 lần đã chính thức ra mắt.',
+    targetAudience: 'Tất cả người dùng (Free, Premium, VIP)',
+    targetFilter: 'ALL',
+    type: 'CONTENT_UPDATE',
+    sentAt: '2026-09-12 10:00:00',
+    openRate: '49.5%',
+    openCount: 7850,
+    totalSent: 15858,
+    status: 'SENT',
+    targetScreen: 'vocab_catalog'
+  },
+  {
+    id: 'notif-06',
+    code: 'NOTIF-06',
+    title: '🔔 Đừng để đứt chuỗi Streak của bạn!',
+    message: 'Chỉ còn 3 tiếng nữa là kết thúc ngày, hãy vào ôn tập ngay 3 từ vựng để bảo vệ chuỗi Streak!',
+    targetAudience: 'Học viên chưa học trong ngày',
+    targetFilter: 'INACTIVE_TODAY',
+    type: 'REMINDER',
+    sentAt: '2026-10-19 21:00:00',
+    openRate: 'Đang lên lịch',
+    openCount: 0,
+    totalSent: 2450,
+    status: 'SCHEDULED',
+    targetScreen: 'flashcard_review'
   }
 ];
 

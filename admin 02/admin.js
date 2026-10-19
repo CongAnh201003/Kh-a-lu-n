@@ -33,11 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
   populateTopicDropdowns();
   renderVocabTable();
   renderTopicsGrid();
-  renderExercisesGrid('ALL');
+  renderPushNotificationsTable();
   renderMediaLibrary();
   renderAdminAccountsTable();
   renderRbacMatrixTable();
   renderAuditLogsTable();
+  renderPlansCatalogTable();
   renderPlanCardsGrid();
   renderUserSubscriptionsTable();
   renderFinanceDashboard();
@@ -74,7 +75,8 @@ function switchAdminTab(tabName) {
     'users': 'viewCustomers',
     'vocab-list': 'viewVocab',
     'topics': 'viewTopics',
-    'exercises': 'viewExercises',
+    'notifications': 'viewNotifications',
+    'exercises': 'viewDashboard',
     'media-library': 'viewMedia',
     'ai-config': 'viewAiConfig',
     'learning-analytics': 'viewAnalytics',
@@ -114,6 +116,12 @@ function switchAdminTab(tabName) {
     renderSystemUsersTable();
   } else if (tabName === 'customers' || tabName === 'users') {
     renderCustomersTable();
+  } else if (tabName === 'notifications') {
+    renderPushNotificationsTable();
+  } else if (tabName === 'subscriptions') {
+    renderPlansCatalogTable();
+    renderPlanCardsGrid();
+    renderUserSubscriptionsTable();
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -955,9 +963,6 @@ function renderVocabTable(items = VOCAB_ITEMS) {
         </span>
       </td>
       <td style="text-align:right;white-space:nowrap;">
-        <button type="button" class="btn-action-icon" title="Xem bài tập liên kết" onclick="viewLinkedExercises('${v.id}')">
-          <i class="fa-solid fa-link" style="color:#8b5cf6;"></i>
-        </button>
         <button type="button" class="btn-action-icon" title="Chỉnh sửa từ vựng" onclick="openEditVocabModal('${v.id}')">
           <i class="fa-solid fa-pen-to-square"></i>
         </button>
@@ -1320,299 +1325,316 @@ function openEditTopicModal(topicId) {
 }
 
 // ==========================================================================
-// 8. MODULE 5: EXERCISE MANAGEMENT LOGIC
+// 8. MODULE: PUSH NOTIFICATIONS TO MOBILE APP (QUẢN LÝ THÔNG BÁO ĐẨY)
+// Khớp 100% thiết kế giao diện từ ảnh thực tế của người dùng & đẩy thông báo
 // ==========================================================================
-let currentExerciseTypeFilter = 'ALL';
+function renderPushNotificationsTable(notifs = PUSH_NOTIFICATIONS) {
+  const tbody = document.getElementById('pushNotificationsTableBody');
+  if (!tbody) return;
 
-function renderExercisesGrid(items = EXERCISE_ITEMS) {
-  const container = document.getElementById('exercisesGridContainer');
-  if (!container) return;
-
-  if (items.length === 0) {
-    container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;"><i class="fa-solid fa-magnifying-glass" style="font-size:1.6rem;margin-bottom:8px;display:block;"></i>Không tìm thấy bộ bài tập nào phù hợp với bộ lọc</div>`;
+  if (notifs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:36px;color:#64748b;"><i class="fa-solid fa-magnifying-glass" style="font-size:1.6rem;margin-bottom:8px;display:block;"></i>Không tìm thấy thông báo đẩy nào phù hợp với bộ lọc</td></tr>`;
     return;
   }
 
-  container.innerHTML = items.map(ex => `
-    <div class="exercise-card">
-      <div class="exercise-card-header">
-        <div class="exercise-icon-box">
-          <i class="fa-solid ${ex.typeIcon || 'fa-gamepad'}"></i>
-        </div>
-        <div style="flex:1;">
-          <span class="exercise-type-tag">${ex.typeName}</span>
-          <h4 style="font-size:0.95rem;margin:4px 0 2px;color:var(--text-primary);">${ex.title}</h4>
-          <span style="font-size:0.75rem;color:var(--text-muted);">${ex.topicName} • ${ex.estimatedDuration}</span>
-        </div>
-      </div>
-
-      <div class="exercise-stats-bar">
-        <div class="stats-label-row">
-          <span>Tỷ lệ hoàn thành: <strong>${ex.completionRate}%</strong></span>
-          <span>Điểm TB: <strong>${ex.avgScore}/100</strong></span>
-        </div>
-        <div class="stats-progress-bg">
-          <div class="stats-progress-fill" style="width:${ex.completionRate}%;"></div>
-        </div>
-      </div>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #f1f5f9;font-size:0.8rem;">
-        <span><i class="fa-solid fa-list-ol"></i> ${ex.questionCount} câu hỏi</span>
-        <button type="button" class="btn-action btn-purple" style="padding:6px 14px;font-size:0.78rem;" onclick="openExercisePreview('${ex.id}')">
-          <i class="fa-solid fa-play"></i> Xem Trước &amp; Chơi Thử
-        </button>
-      </div>
-    </div>
-  `).join('');
-
-  const countBadge = document.getElementById('exerciseCountBadge');
-  if (countBadge) countBadge.innerText = `${items.length} bộ`;
-}
-
-function filterExerciseTab(typeKey, btn) {
-  document.querySelectorAll('#viewExercises .module-tab-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  currentExerciseTypeFilter = typeKey;
-  filterExercisesGrid();
-}
-
-function filterExercisesGrid() {
-  const q = (document.getElementById('exerciseSearchInput')?.value || '').toLowerCase().trim();
-  const topic = document.getElementById('exerciseFilterTopic')?.value || '';
-  const diff = document.getElementById('exerciseFilterDifficulty')?.value || '';
-
-  const filtered = EXERCISE_ITEMS.filter(ex => {
-    const matchType = currentExerciseTypeFilter === 'ALL' || ex.type === currentExerciseTypeFilter;
-    const matchQ = ex.title.toLowerCase().includes(q) || ex.topicName.toLowerCase().includes(q);
-    const matchTopic = !topic || ex.topicName.includes(topic);
-    let matchDiff = true;
-    if (diff === 'Dễ') matchDiff = ex.completionRate >= 80;
-    else if (diff === 'Trung bình') matchDiff = ex.completionRate >= 65 && ex.completionRate < 80;
-    else if (diff === 'Khó') matchDiff = ex.completionRate < 65;
-    return matchType && matchQ && matchTopic && matchDiff;
-  });
-
-  renderExercisesGrid(filtered);
-  const badge = document.getElementById('exerciseFilterResultBadge');
-  if (badge) badge.innerText = `${filtered.length} bộ bài tập`;
-}
-
-function resetExerciseFilters() {
-  if (document.getElementById('exerciseSearchInput')) document.getElementById('exerciseSearchInput').value = '';
-  if (document.getElementById('exerciseFilterTopic')) document.getElementById('exerciseFilterTopic').value = '';
-  if (document.getElementById('exerciseFilterDifficulty')) document.getElementById('exerciseFilterDifficulty').value = '';
-  currentExerciseTypeFilter = 'ALL';
-  const allTabBtn = document.querySelector('#viewExercises .module-tab-btn');
-  if (allTabBtn) {
-    document.querySelectorAll('#viewExercises .module-tab-btn').forEach(b => b.classList.remove('active'));
-    allTabBtn.classList.add('active');
-  }
-  renderExercisesGrid(EXERCISE_ITEMS);
-  const badge = document.getElementById('exerciseFilterResultBadge');
-  if (badge) badge.innerText = `${EXERCISE_ITEMS.length} bộ bài tập`;
-  showToast('Đã đặt lại bộ lọc bài tập!', 'info');
-}
-
-function openExercisePreview(exerciseId) {
-  const ex = EXERCISE_ITEMS.find(e => e.id === exerciseId);
-  if (!ex) return;
-
-  const modal = document.getElementById('exercisePreviewModal');
-  const titleEl = document.getElementById('exercisePreviewTitle');
-  const bodyEl = document.getElementById('exercisePreviewBody');
-
-  titleEl.innerHTML = `<i class="fa-solid ${ex.typeIcon}"></i> Xem Trước: ${ex.title}`;
-
-  if (ex.type === 'WORD_MATCH') {
-    // Game Ghép Thẻ Tương Tác
-    bodyEl.innerHTML = `
-      <div style="margin-bottom:14px;font-size:0.85rem;color:var(--text-muted);">
-        Chạm chọn 1 thẻ tiếng Anh và 1 thẻ nghĩa tiếng Việt tương ứng để ghép cặp.
-      </div>
-      <div class="matching-pairs-grid" id="matchPairsGameGrid">
-        ${ex.questions.map(q => `
-          <div class="match-tile" data-val="${q.word}" onclick="handleMatchTileClick(this, '${q.word}', 'EN')">${q.word}</div>
-          <div class="match-tile" data-val="${q.word}" onclick="handleMatchTileClick(this, '${q.word}', 'VI')">${q.match}</div>
-        `).sort(() => Math.random() - 0.5).join('')}
-      </div>
-      <div style="margin-top:14px;text-align:center;font-size:0.85rem;" id="matchGameScore">
-        Điểm số: <strong style="color:#10b981;">0</strong> / ${ex.questions.length * 10}
-      </div>
-    `;
-    currentMatchingGame = { selected: null, score: 0, total: ex.questions.length };
-  } else if (ex.type === 'PRONUNCIATION') {
-    // Luyện Phát Âm
-    bodyEl.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        ${ex.questions.map(q => `
-          <div style="background:#f8fafc;padding:14px;border-radius:8px;border:1px solid #e2e8f0;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div>
-                <strong style="font-size:1.1rem;color:#173d8f;">${q.word}</strong>
-                <span style="font-family:var(--font-mono);color:#6366f1;margin-left:8px;">${q.ipa}</span>
-              </div>
-              <button type="button" class="btn-action btn-outline" onclick="playSampleAudio('${q.word}', '${q.audioSample}')">
-                <i class="fa-solid fa-volume-high"></i> Nghe mẫu
-              </button>
-            </div>
-            <p style="font-size:0.8rem;color:var(--text-muted);margin:6px 0;">Âm tiết: ${q.syllables} • ${q.tips}</p>
-            <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
-              <button type="button" class="btn-action btn-purple" style="font-size:0.8rem;" onclick="simulatePronounceCheck('${q.word}')">
-                <i class="fa-solid fa-microphone"></i> Thử Thu Âm Giả Lập
-              </button>
-              <span id="scoreBadge_${q.word}" style="font-size:0.82rem;font-weight:700;"></span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  } else if (ex.type === 'DICTATION') {
-    // Dictation Nghe & Viết
-    bodyEl.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        ${ex.questions.map((q, idx) => `
-          <div style="background:#f8fafc;padding:14px;border-radius:8px;border:1px solid #e2e8f0;">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-              <span class="badge-status badge-info">Câu ${idx + 1}</span>
-              <button type="button" class="btn-action btn-outline" onclick="playSampleAudio('sentence', '${q.audioUrl}')">
-                <i class="fa-solid fa-play"></i> Nghe Audio Mẫu
-              </button>
-            </div>
-            <input type="text" class="form-input" id="dictInput_${q.id}" placeholder="Gõ lại câu hoàn chỉnh bạn vừa nghe được...">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
-              <button type="button" class="btn-action btn-primary" style="font-size:0.8rem;" onclick="checkDictationAnswer('${q.id}', '${q.correctText}')">
-                Kiểm Tra Đáp Án
-              </button>
-              <span id="dictResult_${q.id}" style="font-size:0.85rem;font-weight:600;"></span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  } else if (ex.type === 'SENTENCE_ORDER') {
-    // Sắp Xếp Câu
-    bodyEl.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        ${ex.questions.map((q, idx) => `
-          <div style="background:#f8fafc;padding:14px;border-radius:8px;border:1px solid #e2e8f0;">
-            <span class="badge-status badge-warning" style="margin-bottom:8px;">Câu hỏi ${idx + 1}</span>
-            <div class="sentence-word-bank" style="margin:10px 0;">
-              ${q.scrambledWords.map(w => `
-                <span class="match-tile" style="cursor:pointer;" onclick="appendWordToSentence('${q.id}', '${w}')">${w}</span>
-              `).join('')}
-            </div>
-            <div style="background:#ffffff;border:1px dashed #cbd5e1;padding:10px;border-radius:6px;min-height:38px;font-size:0.9rem;" id="sentenceArea_${q.id}"></div>
-            <div style="display:flex;justify-content:space-between;margin-top:10px;">
-              <button type="button" class="btn-action btn-outline" style="font-size:0.78rem;" onclick="clearSentenceArea('${q.id}')">Làm lại</button>
-              <button type="button" class="btn-action btn-primary" style="font-size:0.78rem;" onclick="checkSentenceOrder('${q.id}', '${q.correctSentence}')">Kiểm Tra</button>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  if (modal) modal.classList.add('active');
-}
-
-function handleMatchTileClick(tile, wordVal, lang) {
-  if (tile.classList.contains('matched')) return;
-
-  if (!currentMatchingGame.selected) {
-    // Chọn thẻ thứ nhất
-    document.querySelectorAll('.match-tile.selected').forEach(t => t.classList.remove('selected'));
-    tile.classList.add('selected');
-    currentMatchingGame.selected = { tile, wordVal, lang };
-  } else {
-    // Chọn thẻ thứ hai
-    const prev = currentMatchingGame.selected;
-    if (prev.tile === tile) {
-      tile.classList.remove('selected');
-      currentMatchingGame.selected = null;
-      return;
-    }
-
-    if (prev.wordVal === wordVal && prev.lang !== lang) {
-      // Ghép đúng!
-      prev.tile.classList.remove('selected');
-      prev.tile.classList.add('matched');
-      tile.classList.add('matched');
-      currentMatchingGame.score += 10;
-      document.getElementById('matchGameScore').innerHTML = `Điểm số: <strong style="color:#10b981;">${currentMatchingGame.score}</strong>`;
-      currentMatchingGame.selected = null;
+  tbody.innerHTML = notifs.map(n => {
+    let typeBadge = '';
+    if (n.type === 'REMINDER') {
+      typeBadge = `<span style="background:rgba(139,92,246,0.14);color:#7c3aed;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;letter-spacing:0.02em;">REMINDER</span>`;
+    } else if (n.type === 'CONTENT_UPDATE') {
+      typeBadge = `<span style="background:rgba(217,70,239,0.14);color:#c026d3;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;letter-spacing:0.02em;">CONTENT_UPDATE</span>`;
+    } else if (n.type === 'PROMOTION') {
+      typeBadge = `<span style="background:rgba(244,63,94,0.14);color:#e11d48;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;letter-spacing:0.02em;">PROMOTION</span>`;
     } else {
-      // Ghép sai
-      tile.classList.add('selected');
-      setTimeout(() => {
-        prev.tile.classList.remove('selected');
-        tile.classList.remove('selected');
-        currentMatchingGame.selected = null;
-      }, 500);
+      typeBadge = `<span style="background:rgba(245,158,11,0.14);color:#d97706;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;letter-spacing:0.02em;">SYSTEM</span>`;
     }
-  }
+
+    let statusBadge = '';
+    if (n.status === 'SENT') {
+      statusBadge = `<span style="background:#10b981;color:#ffffff;padding:3px 10px;border-radius:9999px;font-size:0.72rem;font-weight:700;">ĐÃ GỬI</span>`;
+    } else if (n.status === 'SCHEDULED') {
+      statusBadge = `<span style="background:#3b82f6;color:#ffffff;padding:3px 10px;border-radius:9999px;font-size:0.72rem;font-weight:700;">LÊN LỊCH</span>`;
+    } else {
+      statusBadge = `<span style="background:#94a3b8;color:#ffffff;padding:3px 10px;border-radius:9999px;font-size:0.72rem;font-weight:700;">BẢN NHÁP</span>`;
+    }
+
+    return `
+      <tr>
+        <td><span class="mono-code" style="font-weight:700;background:#f1f5f9;color:#1e293b;padding:3px 8px;border-radius:4px;">${n.code}</span></td>
+        <td>
+          <div style="font-weight:700;color:var(--text-primary);font-size:0.88rem;line-height:1.4;">${n.title}</div>
+        </td>
+        <td>
+          <div style="color:#475569;font-size:0.83rem;line-height:1.45;max-width:380px;">${n.message}</div>
+        </td>
+        <td>
+          <span style="color:#2563eb;font-weight:600;font-size:0.82rem;">${n.targetAudience}</span>
+        </td>
+        <td>${typeBadge}</td>
+        <td>
+          <span style="font-family:var(--font-mono);font-size:0.78rem;color:#64748b;white-space:nowrap;">${n.sentAt}</span>
+        </td>
+        <td>
+          <span style="color:#10b981;font-weight:700;font-size:0.84rem;">
+            ${n.openRate}
+            ${n.openCount ? `<div style="font-size:0.74rem;color:#64748b;font-weight:500;">(${n.openCount.toLocaleString('vi-VN')} lượt mở)</div>` : ''}
+          </span>
+        </td>
+        <td>${statusBadge}</td>
+        <td style="text-align:right;">
+          <div style="display:inline-flex;gap:4px;align-items:center;">
+            <button type="button" class="btn-action-icon" title="Xem trước trên điện thoại" onclick="previewPushNotification('${n.id}')">
+              <i class="fa-solid fa-mobile-screen"></i>
+            </button>
+            <button type="button" class="btn-action-icon" title="Gửi lại thông báo này" onclick="resendPushNotification('${n.id}')">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+            <button type="button" class="btn-action-icon" style="color:#ef4444;" title="Xóa thông báo" onclick="deletePushNotification('${n.id}')">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Update counts
+  const badge = document.getElementById('notifFilterCountBadge');
+  if (badge) badge.innerText = `${notifs.length} thông báo`;
+
+  const navBadge = document.getElementById('notifCountBadge');
+  if (navBadge) navBadge.innerText = `${PUSH_NOTIFICATIONS.length} tin`;
+
+  const kpiTotal = document.getElementById('kpiNotifTotal');
+  if (kpiTotal) kpiTotal.innerText = `${PUSH_NOTIFICATIONS.length} bản tin`;
 }
 
-function playSampleAudio(text, audioUrl) {
-  const audio = new Audio(audioUrl);
-  audio.play().catch(() => {
-    if ('speechSynthesis' in window) {
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-US';
-      window.speechSynthesis.speak(u);
-    }
+function filterPushNotificationsTable() {
+  const q = (document.getElementById('notifSearchInput')?.value || '').toLowerCase().trim();
+  const type = document.getElementById('notifFilterType')?.value || '';
+  const audience = document.getElementById('notifFilterAudience')?.value || '';
+  const status = document.getElementById('notifFilterStatus')?.value || '';
+
+  const filtered = PUSH_NOTIFICATIONS.filter(n => {
+    const matchQ = !q || n.title.toLowerCase().includes(q) || n.message.toLowerCase().includes(q) || n.code.toLowerCase().includes(q);
+    const matchType = !type || n.type === type;
+    const matchAudience = !audience || n.targetFilter === audience || n.targetAudience.includes(audience);
+    const matchStatus = !status || n.status === status;
+    return matchQ && matchType && matchAudience && matchStatus;
   });
+
+  renderPushNotificationsTable(filtered);
 }
 
-function simulatePronounceCheck(word) {
-  const badge = document.getElementById(`scoreBadge_${word}`);
-  if (badge) {
-    badge.innerText = 'Đang phân tích âm tiết AI...';
-    setTimeout(() => {
-      const score = Math.floor(Math.random() * 15) + 85; // 85 - 99
-      badge.innerHTML = `<span style="color:#10b981;"><i class="fa-solid fa-check"></i> Điểm AI: ${score}/100 (Xuất sắc)</span>`;
-    }, 800);
+function resetPushNotificationFilters() {
+  if (document.getElementById('notifSearchInput')) document.getElementById('notifSearchInput').value = '';
+  if (document.getElementById('notifFilterType')) document.getElementById('notifFilterType').value = '';
+  if (document.getElementById('notifFilterAudience')) document.getElementById('notifFilterAudience').value = '';
+  if (document.getElementById('notifFilterStatus')) document.getElementById('notifFilterStatus').value = '';
+  renderPushNotificationsTable(PUSH_NOTIFICATIONS);
+  showToast('Đã đặt lại bộ lọc thông báo đẩy!', 'info');
+}
+
+function openComposeNotificationModal() {
+  const form = document.getElementById('composeNotifForm');
+  if (form) form.reset();
+
+  const titleInput = document.getElementById('composeNotifTitle');
+  if (titleInput) titleInput.value = '⏰ Đã đến giờ học từ vựng hôm nay!';
+
+  const msgInput = document.getElementById('composeNotifMessage');
+  if (msgInput) msgInput.value = 'Bạn còn 5 từ vựng chủ đề Business cần ôn tập để duy trì chuỗi Streak 25 ngày. Học ngay nhé!';
+
+  const schedGroup = document.getElementById('scheduleTimeGroup');
+  if (schedGroup) schedGroup.style.display = 'none';
+
+  updateMobilePreviewRealtime();
+  openModal('modalComposeNotification');
+}
+
+function insertEmojiToNotif(emoji) {
+  const input = document.getElementById('composeNotifTitle');
+  if (!input) return;
+  input.value = emoji + ' ' + input.value.replace(/^[⏰✨🔥🎉📢⚡🔔💡🎁]\s*/, '');
+  updateMobilePreviewRealtime();
+}
+
+function updateMobilePreviewRealtime() {
+  const title = document.getElementById('composeNotifTitle')?.value || 'Tiêu đề thông báo...';
+  const body = document.getElementById('composeNotifMessage')?.value || 'Nội dung tin nhắn đẩy đến ứng dụng...';
+  const type = document.getElementById('composeNotifType')?.value || 'REMINDER';
+
+  const mTitle = document.getElementById('mockupNotifTitle');
+  if (mTitle) mTitle.innerText = title;
+
+  const mBody = document.getElementById('mockupNotifBody');
+  if (mBody) mBody.innerText = body;
+
+  const mBadge = document.getElementById('mockupTypeBadge');
+  if (mBadge) mBadge.innerText = type;
+
+  const charCount = document.getElementById('notifCharCount');
+  if (charCount) charCount.innerText = body.length;
+}
+
+function toggleScheduleTimeInput(val) {
+  const schedGroup = document.getElementById('scheduleTimeGroup');
+  if (schedGroup) {
+    schedGroup.style.display = val === 'SCHEDULED' ? 'block' : 'none';
   }
 }
 
-function checkDictationAnswer(id, correct) {
-  const input = document.getElementById(`dictInput_${id}`)?.value.trim() || '';
-  const result = document.getElementById(`dictResult_${id}`);
-  if (!result) return;
+function sendPushNotification(sendMode = 'SENT') {
+  const title = document.getElementById('composeNotifTitle')?.value.trim();
+  const message = document.getElementById('composeNotifMessage')?.value.trim();
+  const type = document.getElementById('composeNotifType')?.value || 'REMINDER';
+  const audienceSelect = document.getElementById('composeNotifAudience');
+  const audienceText = audienceSelect ? audienceSelect.options[audienceSelect.selectedIndex].text.split('(')[0].trim() : 'Tất cả người dùng';
+  const audienceKey = audienceSelect ? audienceSelect.value : 'ALL';
+  const screen = document.getElementById('composeNotifScreen')?.value || 'flashcard_review';
 
-  if (input.toLowerCase() === correct.toLowerCase()) {
-    result.innerHTML = '<span style="color:#10b981;"><i class="fa-solid fa-circle-check"></i> Hoàn toàn chính xác! 100/100</span>';
+  if (!title || !message) {
+    showToast('Vui lòng điền đầy đủ Tiêu đề và Nội dung thông báo!', 'error');
+    return;
+  }
+
+  const nextIndex = PUSH_NOTIFICATIONS.length + 1;
+  const newCode = `NOTIF-${String(nextIndex).padStart(2, '0')}`;
+  const now = new Date();
+  const nowStr = now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0') + ' ' +
+    String(now.getHours()).padStart(2, '0') + ':' +
+    String(now.getMinutes()).padStart(2, '0') + ':' +
+    String(now.getSeconds()).padStart(2, '0');
+
+  let sentTime = nowStr;
+  let statusVal = sendMode;
+  let openRateText = '0.0%';
+
+  if (sendMode === 'SCHEDULED') {
+    const schedDate = document.getElementById('composeNotifDateTime')?.value;
+    if (schedDate) {
+      sentTime = schedDate.replace('T', ' ') + ':00';
+    }
+    openRateText = 'Đang lên lịch';
+  } else if (sendMode === 'DRAFT') {
+    openRateText = 'Bản nháp';
+    statusVal = 'DRAFT';
+  }
+
+  const newNotif = {
+    id: `notif-${Date.now()}`,
+    code: newCode,
+    title: title,
+    message: message,
+    targetAudience: audienceText,
+    targetFilter: audienceKey,
+    type: type,
+    sentAt: sentTime,
+    openRate: openRateText,
+    openCount: 0,
+    totalSent: 15850,
+    status: statusVal,
+    targetScreen: screen
+  };
+
+  PUSH_NOTIFICATIONS.unshift(newNotif);
+  closeModal('modalComposeNotification');
+  renderPushNotificationsTable(PUSH_NOTIFICATIONS);
+
+  if (sendMode === 'SENT') {
+    showToast(`🎉 Đã đẩy thông báo "${title}" thành công tới 15,850 thiết bị ứng dụng!`, 'success');
+  } else if (sendMode === 'SCHEDULED') {
+    showToast(`📅 Đã lên lịch gửi thông báo "${title}" vào lúc ${sentTime}!`, 'info');
   } else {
-    result.innerHTML = `<span style="color:#ef4444;"><i class="fa-solid fa-circle-xmark"></i> Chưa đúng. Đáp án: "${correct}"</span>`;
+    showToast(`💾 Đã lưu bản nháp thông báo "${title}"!`, 'info');
   }
 }
 
-function appendWordToSentence(id, word) {
-  const area = document.getElementById(`sentenceArea_${id}`);
-  if (area) {
-    const cur = area.innerText.trim();
-    area.innerText = cur ? `${cur} ${word}` : word;
+function previewPushNotification(notifId) {
+  const notif = PUSH_NOTIFICATIONS.find(n => n.id === notifId);
+  if (!notif) return;
+
+  const headerTitle = document.getElementById('notifPreviewHeaderTitle');
+  if (headerTitle) {
+    headerTitle.innerHTML = `<i class="fa-solid fa-mobile-screen"></i> Chi Tiết Thông Báo: <span class="mono-code">${notif.code}</span>`;
+  }
+
+  const statusBadgeEl = document.getElementById('notifPreviewStatusBadge');
+  if (statusBadgeEl) {
+    statusBadgeEl.innerHTML = notif.status === 'SENT'
+      ? `<span style="background:#10b981;color:#ffffff;padding:4px 12px;border-radius:9999px;font-size:0.75rem;font-weight:700;">ĐÃ GỬI THÀNH CÔNG</span>`
+      : `<span style="background:#3b82f6;color:#ffffff;padding:4px 12px;border-radius:9999px;font-size:0.75rem;font-weight:700;">ĐANG LÊN LỊCH</span>`;
+  }
+
+  const bodyEl = document.getElementById('notifPreviewBody');
+  if (bodyEl) {
+    bodyEl.innerHTML = `
+      <div style="background:#0f172a;border-radius:24px;padding:22px 18px;color:#ffffff;box-shadow:0 12px 30px rgba(0,0,0,0.25);margin-bottom:20px;">
+        <div style="text-align:center;margin-bottom:14px;">
+          <div style="font-size:1.8rem;font-weight:300;">20:45</div>
+          <div style="font-size:0.74rem;color:#94a3b8;">Màn hình khóa học viên</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.95);border-radius:16px;padding:14px;color:#0f172a;box-shadow:0 6px 20px rgba(0,0,0,0.2);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:22px;height:22px;background:#173d8f;border-radius:5px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:0.7rem;">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </div>
+              <span style="font-size:0.78rem;font-weight:700;color:#1e293b;">LINGUAPAY</span>
+              <span style="font-size:0.68rem;color:#64748b;">• ${notif.sentAt}</span>
+            </div>
+            <span style="font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;background:#eff6ff;color:#2563eb;">${notif.type}</span>
+          </div>
+          <div style="font-size:0.88rem;font-weight:700;color:#0f172a;margin-bottom:4px;">${notif.title}</div>
+          <div style="font-size:0.8rem;color:#334155;line-height:1.4;">${notif.message}</div>
+        </div>
+      </div>
+
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Thông Số Chiến Dịch Đẩy</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.8rem;">
+          <div>Đối tượng nhận: <strong>${notif.targetAudience}</strong></div>
+          <div>Màn hình đích: <strong>${notif.targetScreen || 'Trang chủ'}</strong></div>
+          <div>Tỷ lệ mở App (CTR): <strong style="color:#10b981;">${notif.openRate}</strong></div>
+          <div>Số lượt mở thực tế: <strong>${notif.openCount ? notif.openCount.toLocaleString('vi-VN') + ' lượt' : 'Chưa có dữ liệu'}</strong></div>
+        </div>
+      </div>
+    `;
+  }
+
+  openModal('modalNotifPreview');
+}
+
+function resendPushNotification(notifId) {
+  const notif = PUSH_NOTIFICATIONS.find(n => n.id === notifId);
+  if (!notif) return;
+
+  if (confirm(`Bạn có chắc chắn muốn đẩy lại thông báo "${notif.title}" tới toàn bộ người dùng ngay bây giờ?`)) {
+    const now = new Date();
+    notif.sentAt = now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + ' ' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0') + ':' +
+      String(now.getSeconds()).padStart(2, '0');
+    notif.status = 'SENT';
+    renderPushNotificationsTable(PUSH_NOTIFICATIONS);
+    showToast(`🚀 Đã gửi lại thông báo "${notif.title}" thành công tới người dùng ứng dụng!`, 'success');
   }
 }
 
-function clearSentenceArea(id) {
-  const area = document.getElementById(`sentenceArea_${id}`);
-  if (area) area.innerText = '';
-}
+function deletePushNotification(notifId) {
+  const index = PUSH_NOTIFICATIONS.findIndex(n => n.id === notifId);
+  if (index === -1) return;
 
-function checkSentenceOrder(id, correct) {
-  const area = document.getElementById(`sentenceArea_${id}`);
-  if (!area) return;
-  const userText = area.innerText.trim();
-
-  if (userText === correct) {
-    showToast('Chính xác! Thứ tự câu hoàn hảo.', 'success');
-  } else {
-    showToast(`Chưa đúng! Đáp án chuẩn: "${correct}"`, 'error');
+  const notif = PUSH_NOTIFICATIONS[index];
+  if (confirm(`Bạn có chắc muốn xóa bản tin thông báo "${notif.title}" (${notif.code})?`)) {
+    PUSH_NOTIFICATIONS.splice(index, 1);
+    renderPushNotificationsTable(PUSH_NOTIFICATIONS);
+    showToast(`Đã xóa thông báo "${notif.title}" khỏi hệ thống!`, 'info');
   }
-}
-
-function openCreateExerciseModal() {
-  alert('Form tạo bộ câu hỏi Exercise mới sẽ mở ra để cấu hình danh sách Question, thời lượng và độ khó.');
 }
 
 // ==========================================================================
@@ -3575,8 +3597,10 @@ function exportAuditCsv() {
 }
 
 // ==========================================================================
-// 14. MODULE 11: SUBSCRIPTION & PLAN LOGIC
+// 14. MODULE 11: SUBSCRIPTION & PLAN LOGIC (QUẢN LÝ GÓI CƯỚC & THUÊ BAO)
 // ==========================================================================
+let currentPlanViewMode = 'table';
+
 function switchSubPlanSubtab(tabKey, btn) {
   document.querySelectorAll('#viewSubscriptions .module-tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('#viewSubscriptions .module-tab-panel').forEach(p => p.classList.remove('active'));
@@ -3585,9 +3609,416 @@ function switchSubPlanSubtab(tabKey, btn) {
 
   if (tabKey === 'plans') {
     document.getElementById('subpanelPlans')?.classList.add('active');
+    renderPlansCatalogTable();
   } else {
     document.getElementById('subpanelSubscriptions')?.classList.add('active');
+    renderUserSubscriptionsTable();
   }
+}
+
+function switchPlanViewMode(mode) {
+  currentPlanViewMode = mode;
+  const tableContainer = document.getElementById('planTableViewContainer');
+  const cardsContainer = document.getElementById('planCardsGrid');
+  const btnTable = document.getElementById('btnPlanTableView');
+  const btnCards = document.getElementById('btnPlanCardView');
+
+  if (mode === 'table') {
+    if (tableContainer) tableContainer.style.display = 'block';
+    if (cardsContainer) cardsContainer.style.display = 'none';
+    if (btnTable) {
+      btnTable.classList.add('active');
+      btnTable.style.background = '#ffffff';
+      btnTable.style.color = 'var(--text-primary)';
+      btnTable.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+    }
+    if (btnCards) {
+      btnCards.classList.remove('active');
+      btnCards.style.background = 'transparent';
+      btnCards.style.color = 'var(--text-muted)';
+      btnCards.style.boxShadow = 'none';
+    }
+  } else {
+    if (tableContainer) tableContainer.style.display = 'none';
+    if (cardsContainer) cardsContainer.style.display = 'grid';
+    if (btnCards) {
+      btnCards.classList.add('active');
+      btnCards.style.background = '#ffffff';
+      btnCards.style.color = 'var(--text-primary)';
+      btnCards.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+    }
+    if (btnTable) {
+      btnTable.classList.remove('active');
+      btnTable.style.background = 'transparent';
+      btnTable.style.color = 'var(--text-muted)';
+      btnTable.style.boxShadow = 'none';
+    }
+    renderPlanCardsGrid();
+  }
+}
+
+function renderPlansCatalogTable(plans = SUBSCRIPTION_PLANS) {
+  const tbody = document.getElementById('plansTableBody');
+  if (!tbody) return;
+
+  if (plans.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:36px;color:#64748b;"><i class="fa-solid fa-magnifying-glass" style="font-size:1.6rem;margin-bottom:8px;display:block;"></i>Không tìm thấy gói cước nào phù hợp với bộ lọc</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = plans.map(p => {
+    let iconClass = 'fa-book-open';
+    let iconColor = '#3b82f6';
+    if (p.id.includes('vip')) {
+      iconClass = 'fa-crown';
+      iconColor = '#eab308';
+    } else if (p.id.includes('premium')) {
+      iconClass = 'fa-gem';
+      iconColor = '#8b5cf6';
+    }
+
+    const priceText = p.price === 0
+      ? '<span style="color:#10b981;font-weight:700;">Miễn phí (0 ₫)</span>'
+      : `<span style="font-size:1rem;font-weight:800;color:var(--text-primary);">${p.priceFormatted}</span>`;
+
+    return `
+      <tr>
+        <td>
+          <span class="mono-code" style="font-weight:700;color:#1e293b;background:#f1f5f9;padding:4px 8px;border-radius:4px;">${p.code || p.id.toUpperCase()}</span>
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;border-radius:6px;background:${iconColor}15;color:${iconColor};display:flex;align-items:center;justify-content:center;font-size:0.85rem;">
+              <i class="fa-solid ${iconClass}"></i>
+            </div>
+            <div>
+              <div style="font-weight:700;color:var(--text-primary);font-size:0.88rem;">${p.name}</div>
+              <div style="font-size:0.74rem;color:var(--text-muted);line-height:1.3;">${p.description || ''}</div>
+              ${p.discountBadge ? `<span style="display:inline-block;margin-top:3px;font-size:0.68rem;padding:1px 6px;border-radius:9999px;background:#eff6ff;color:#2563eb;font-weight:700;">${p.discountBadge}</span>` : ''}
+            </div>
+          </div>
+        </td>
+        <td>${priceText}</td>
+        <td>
+          <div style="font-weight:600;color:#1e293b;font-size:0.84rem;">${p.billingPeriod}</div>
+          <div style="font-size:0.74rem;color:var(--text-muted);">${p.durationDays >= 9000 ? 'Vĩnh viễn' : `${p.durationDays} ngày`}</div>
+        </td>
+        <td>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;max-width:320px;">
+            <span style="background:#f1f5f9;color:#334155;padding:2px 7px;border-radius:4px;font-size:0.72rem;font-weight:600;">
+              AI Stories: ${p.limits.aiStoriesPerDay}/ngày
+            </span>
+            <span style="background:#f1f5f9;color:#334155;padding:2px 7px;border-radius:4px;font-size:0.72rem;font-weight:600;">
+              ${p.limits.unlockedTopics} chủ đề
+            </span>
+            ${p.limits.pronounceAiCheck ? `<span style="background:rgba(16,185,129,0.12);color:#059669;padding:2px 7px;border-radius:4px;font-size:0.72rem;font-weight:600;"><i class="fa-solid fa-check"></i> Chấm âm AI</span>` : ''}
+            ${p.limits.audioOffline ? `<span style="background:rgba(59,130,246,0.12);color:#2563eb;padding:2px 7px;border-radius:4px;font-size:0.72rem;font-weight:600;"><i class="fa-solid fa-download"></i> Audio offline</span>` : ''}
+          </div>
+        </td>
+        <td style="text-align:center;">
+          <span style="font-weight:700;color:#64748b;">#${p.displayOrder || 1}</span>
+        </td>
+        <td style="text-align:center;">
+          ${p.status === 'ACTIVE'
+            ? `<span style="background:#10b981;color:#ffffff;padding:3px 10px;border-radius:9999px;font-size:0.72rem;font-weight:700;">ĐANG BÁN</span>`
+            : `<span style="background:#94a3b8;color:#ffffff;padding:3px 10px;border-radius:9999px;font-size:0.72rem;font-weight:700;">TẠM DỪNG</span>`
+          }
+        </td>
+        <td style="text-align:right;">
+          <div style="display:inline-flex;gap:4px;align-items:center;">
+            <button type="button" class="btn-action-icon" title="Chỉnh sửa gói cước" onclick="openEditPlanModal('${p.id}')">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button type="button" class="btn-action-icon" title="${p.status === 'ACTIVE' ? 'Tạm dừng bán' : 'Mở bán lại'}" onclick="togglePlanStatus('${p.id}')">
+              <i class="fa-solid ${p.status === 'ACTIVE' ? 'fa-pause' : 'fa-play'}"></i>
+            </button>
+            <button type="button" class="btn-action-icon" title="Xem chi tiết đặc quyền" onclick="viewPlanDetails('${p.id}')">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+            <button type="button" class="btn-action-icon" style="color:#ef4444;" title="Xóa gói cước" onclick="deletePlan('${p.id}')">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Update KPI Stats
+  const statTotal = document.getElementById('statPlansTotal');
+  if (statTotal) statTotal.innerText = `${SUBSCRIPTION_PLANS.length} gói`;
+
+  const activeCount = SUBSCRIPTION_PLANS.filter(p => p.status === 'ACTIVE').length;
+  const inactiveCount = SUBSCRIPTION_PLANS.length - activeCount;
+
+  const statActive = document.getElementById('statPlansActive');
+  if (statActive) statActive.innerText = `${activeCount} gói`;
+
+  const statInactive = document.getElementById('statPlansInactive');
+  if (statInactive) statInactive.innerText = `${inactiveCount} gói`;
+
+  const filterCountBadge = document.getElementById('planFilterCountBadge');
+  if (filterCountBadge) filterCountBadge.innerText = `${plans.length} gói cước`;
+
+  // Always keep cards view synced
+  renderPlanCardsGrid(plans);
+}
+
+function filterPlansCatalog() {
+  const q = (document.getElementById('planSearchInput')?.value || '').toLowerCase().trim();
+  const status = document.getElementById('planFilterStatus')?.value || '';
+  const billing = document.getElementById('planFilterBilling')?.value || '';
+
+  const filtered = SUBSCRIPTION_PLANS.filter(p => {
+    const matchQ = !q || p.name.toLowerCase().includes(q) || (p.code && p.code.toLowerCase().includes(q)) || (p.description && p.description.toLowerCase().includes(q));
+    const matchStatus = !status || p.status === status;
+    const matchBilling = !billing || (p.billingPeriod && p.billingPeriod.includes(billing));
+    return matchQ && matchStatus && matchBilling;
+  });
+
+  renderPlansCatalogTable(filtered);
+}
+
+function resetPlanFilters() {
+  if (document.getElementById('planSearchInput')) document.getElementById('planSearchInput').value = '';
+  if (document.getElementById('planFilterStatus')) document.getElementById('planFilterStatus').value = '';
+  if (document.getElementById('planFilterBilling')) document.getElementById('planFilterBilling').value = '';
+  renderPlansCatalogTable(SUBSCRIPTION_PLANS);
+  showToast('Đã đặt lại bộ lọc danh mục gói cước!', 'info');
+}
+
+function openAddPlanModal() {
+  const form = document.getElementById('planFormElement');
+  if (form) form.reset();
+
+  document.getElementById('planFormMode').value = 'create';
+  document.getElementById('planFormTargetId').value = '';
+  document.getElementById('planFormModalTitle').innerHTML = '<i class="fa-solid fa-plus-circle" style="color:#10b981;"></i> Thêm Gói Cước Mới';
+
+  // Pre-fill smart defaults
+  const nextOrder = SUBSCRIPTION_PLANS.length + 1;
+  document.getElementById('planInputDisplayOrder').value = nextOrder;
+  document.getElementById('planInputCode').value = `VIP_${nextOrder}M`;
+  document.getElementById('planInputCode').readOnly = false;
+  document.getElementById('planInputStatus').value = 'ACTIVE';
+  document.getElementById('planInputAiStories').value = 50;
+  document.getElementById('planInputUnlockedTopics').value = 8;
+  document.getElementById('planInputPronounceAi').checked = true;
+  document.getElementById('planInputAudioOffline').checked = true;
+  document.getElementById('planInputFeatures').value = 'Mở khóa toàn bộ hơn 3.000 từ vựng\nFlashcard Spaced Repetition thông minh\nChấm phát âm AI chuẩn người bản xứ\nĐồng bộ không giới hạn thiết bị';
+
+  openModal('modalPlanForm');
+}
+
+function openEditPlanModal(planId) {
+  const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
+  if (!plan) return;
+
+  document.getElementById('planFormMode').value = 'edit';
+  document.getElementById('planFormTargetId').value = plan.id;
+  document.getElementById('planFormModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:#2563eb;"></i> Chỉnh Sửa Gói Cước: ${plan.name}`;
+
+  document.getElementById('planInputCode').value = plan.code || plan.id.toUpperCase();
+  document.getElementById('planInputCode').readOnly = false;
+  document.getElementById('planInputName').value = plan.name;
+  document.getElementById('planInputPrice').value = plan.price;
+  document.getElementById('planInputBillingPeriod').value = plan.billingPeriod;
+  document.getElementById('planInputDurationDays').value = plan.durationDays;
+  document.getElementById('planInputDiscountBadge').value = plan.discountBadge || '';
+  document.getElementById('planInputDisplayOrder').value = plan.displayOrder || 1;
+  document.getElementById('planInputStatus').value = plan.status || 'ACTIVE';
+
+  document.getElementById('planInputAiStories').value = plan.limits?.aiStoriesPerDay || 25;
+  document.getElementById('planInputUnlockedTopics').value = plan.limits?.unlockedTopics || 8;
+  document.getElementById('planInputPronounceAi').checked = plan.limits?.pronounceAiCheck !== false;
+  document.getElementById('planInputAudioOffline').checked = plan.limits?.audioOffline !== false;
+
+  document.getElementById('planInputDesc').value = plan.description || '';
+  document.getElementById('planInputFeatures').value = (plan.features || []).join('\n');
+
+  openModal('modalPlanForm');
+}
+
+function savePlanForm(e) {
+  e.preventDefault();
+
+  const mode = document.getElementById('planFormMode').value;
+  const targetId = document.getElementById('planFormTargetId').value;
+
+  const code = document.getElementById('planInputCode').value.trim().toUpperCase();
+  const name = document.getElementById('planInputName').value.trim();
+  const price = parseInt(document.getElementById('planInputPrice').value) || 0;
+  const billingPeriod = document.getElementById('planInputBillingPeriod').value.trim();
+  const durationDays = parseInt(document.getElementById('planInputDurationDays').value) || 30;
+  const discountBadge = document.getElementById('planInputDiscountBadge').value.trim();
+  const displayOrder = parseInt(document.getElementById('planInputDisplayOrder').value) || 1;
+  const status = document.getElementById('planInputStatus').value;
+
+  const aiStoriesPerDay = parseInt(document.getElementById('planInputAiStories').value) || 0;
+  const unlockedTopics = parseInt(document.getElementById('planInputUnlockedTopics').value) || 8;
+  const pronounceAiCheck = document.getElementById('planInputPronounceAi').checked;
+  const audioOffline = document.getElementById('planInputAudioOffline').checked;
+
+  const description = document.getElementById('planInputDesc').value.trim();
+  const features = document.getElementById('planInputFeatures').value
+    .split('\n')
+    .map(f => f.trim())
+    .filter(f => f.length > 0);
+
+  const priceFormatted = price === 0 ? 'Miễn phí' : price.toLocaleString('vi-VN') + ' ₫';
+
+  if (mode === 'create') {
+    const existing = SUBSCRIPTION_PLANS.find(p => p.code === code);
+    if (existing) {
+      showToast(`Mã gói "${code}" đã tồn tại trên hệ thống! Vui lòng chọn mã khác.`, 'error');
+      return;
+    }
+
+    const newId = 'plan_' + code.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const newPlan = {
+      id: newId,
+      code: code,
+      name: name,
+      description: description,
+      price: price,
+      priceFormatted: priceFormatted,
+      currency: 'VND',
+      billingPeriod: billingPeriod,
+      durationDays: durationDays,
+      status: status,
+      displayOrder: displayOrder,
+      discountBadge: discountBadge || null,
+      features: features.length > 0 ? features : ['Mở khóa từ vựng cơ bản', 'Flashcard ôn tập thông minh'],
+      limits: {
+        aiStoriesPerDay: aiStoriesPerDay,
+        unlockedTopics: unlockedTopics,
+        audioOffline: audioOffline,
+        pronounceAiCheck: pronounceAiCheck
+      }
+    };
+
+    SUBSCRIPTION_PLANS.push(newPlan);
+    closeModal('modalPlanForm');
+    renderPlansCatalogTable();
+    showToast(`🎉 Đã tạo thành công gói cước mới "${name}"!`, 'success');
+  } else {
+    const plan = SUBSCRIPTION_PLANS.find(p => p.id === targetId);
+    if (!plan) return;
+
+    plan.code = code;
+    plan.name = name;
+    plan.description = description;
+    plan.price = price;
+    plan.priceFormatted = priceFormatted;
+    plan.billingPeriod = billingPeriod;
+    plan.durationDays = durationDays;
+    plan.discountBadge = discountBadge || null;
+    plan.displayOrder = displayOrder;
+    plan.status = status;
+    plan.features = features;
+    plan.limits = {
+      aiStoriesPerDay: aiStoriesPerDay,
+      unlockedTopics: unlockedTopics,
+      audioOffline: audioOffline,
+      pronounceAiCheck: pronounceAiCheck
+    };
+
+    closeModal('modalPlanForm');
+    renderPlansCatalogTable();
+    showToast(`Đã lưu cập nhật cho gói cước "${name}"!`, 'success');
+  }
+}
+
+function togglePlanStatus(planId) {
+  const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
+  if (!plan) return;
+
+  plan.status = plan.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+  renderPlansCatalogTable();
+  const statusMsg = plan.status === 'ACTIVE' ? 'Đang mở bán' : 'Tạm dừng kinh doanh';
+  showToast(`Đã chuyển trạng thái gói "${plan.name}" sang: ${statusMsg}!`, 'info');
+}
+
+function deletePlan(planId) {
+  const index = SUBSCRIPTION_PLANS.findIndex(p => p.id === planId);
+  if (index === -1) return;
+
+  const plan = SUBSCRIPTION_PLANS[index];
+  const subsCount = USER_SUBSCRIPTIONS.filter(s => s.planId === planId).length;
+
+  let warning = `Bạn có chắc chắn muốn xóa gói cước "${plan.name}" (${plan.code})?`;
+  if (subsCount > 0) {
+    warning += `\n\n⚠️ CẢNH BÁO: Hiện có ${subsCount} học viên đang kích hoạt gói này!`;
+  }
+
+  if (confirm(warning)) {
+    SUBSCRIPTION_PLANS.splice(index, 1);
+    renderPlansCatalogTable();
+    showToast(`Đã xóa gói cước "${plan.name}" khỏi danh mục!`, 'info');
+  }
+}
+
+function viewPlanDetails(planId) {
+  const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
+  if (!plan) return;
+
+  const title = document.getElementById('planDetailTitle');
+  if (title) title.innerHTML = `<i class="fa-solid fa-crown" style="color:#eab308;"></i> Chi Tiết: ${plan.name}`;
+
+  const subsCount = USER_SUBSCRIPTIONS.filter(s => s.planId === planId).length;
+
+  const body = document.getElementById('planDetailBody');
+  if (body) {
+    body.innerHTML = `
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div>
+            <span class="mono-code" style="font-weight:700;font-size:0.9rem;">${plan.code}</span>
+            <h4 style="font-size:1.15rem;color:var(--text-primary);margin-top:4px;">${plan.name}</h4>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:1.3rem;font-weight:800;color:#173d8f;">${plan.priceFormatted}</div>
+            <span style="font-size:0.75rem;color:var(--text-muted);">${plan.billingPeriod}</span>
+          </div>
+        </div>
+        <p style="font-size:0.84rem;color:#475569;margin-bottom:12px;">${plan.description || ''}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.8rem;border-top:1px dashed #cbd5e1;padding-top:12px;">
+          <div>Số ngày hiệu lực: <strong>${plan.durationDays >= 9000 ? 'Trọn đời' : `${plan.durationDays} ngày`}</strong></div>
+          <div>Số học viên đang dùng: <strong style="color:#2563eb;">${subsCount} học viên</strong></div>
+          <div>Trạng thái kinh doanh: <strong>${plan.status === 'ACTIVE' ? 'Đang mở bán' : 'Tạm dừng'}</strong></div>
+          <div>Thứ tự hiển thị: <strong>#${plan.displayOrder || 1}</strong></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h5 style="font-size:0.86rem;color:var(--text-primary);margin-bottom:8px;">Hạn Mức Quyền Lợi AI &amp; Hệ Thống:</h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:0.8rem;">
+            <div>Tạo truyện AI Story: <strong>${plan.limits.aiStoriesPerDay}/ngày</strong></div>
+            <div style="margin-top:4px;">Mở khóa: <strong>${plan.limits.unlockedTopics} chủ đề</strong></div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:0.8rem;">
+            <div>Chấm phát âm AI: <strong>${plan.limits.pronounceAiCheck ? 'Có hỗ trợ' : 'Không'}</strong></div>
+            <div style="margin-top:4px;">Tải Audio offline: <strong>${plan.limits.audioOffline ? 'Có cho phép' : 'Không'}</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h5 style="font-size:0.86rem;color:var(--text-primary);margin-bottom:8px;">Danh Sách Đặc Quyền Học Viên:</h5>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
+          ${(plan.features || []).map(f => `
+            <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#334155;">
+              <i class="fa-solid fa-circle-check" style="color:#10b981;font-size:0.85rem;"></i>
+              <span>${f}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  openModal('modalPlanDetail');
 }
 
 function renderPlanCardsGrid(plans = SUBSCRIPTION_PLANS) {
@@ -3598,9 +4029,9 @@ function renderPlanCardsGrid(plans = SUBSCRIPTION_PLANS) {
     <div class="plan-card ${p.id.includes('vip') ? 'highlight' : ''}">
       ${p.discountBadge ? `<span class="plan-discount-badge">${p.discountBadge}</span>` : ''}
       <h3 style="font-size:1.15rem;color:var(--text-primary);">${p.name}</h3>
-      <p style="font-size:0.8rem;color:var(--text-muted);min-height:36px;">${p.description}</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);min-height:36px;">${p.description || ''}</p>
       <div class="plan-price-num">${p.priceFormatted}</div>
-      <div class="plan-period-text">Chu kỳ: ${p.billingPeriod}</div>
+      <div class="plan-period-text">Chu kỳ: ${p.billingPeriod} • ${p.durationDays >= 9000 ? 'Vĩnh viễn' : `${p.durationDays} ngày`}</div>
 
       <ul class="plan-features-list">
         ${p.features.map(f => `<li><i class="fa-solid fa-check"></i> <span>${f}</span></li>`).join('')}
@@ -3612,38 +4043,19 @@ function renderPlanCardsGrid(plans = SUBSCRIPTION_PLANS) {
         <div>Chấm phát âm AI: <strong>${p.limits.pronounceAiCheck ? 'Có' : 'Không'}</strong></div>
       </div>
 
-      <div style="display:flex;gap:8px;margin-top:auto;">
-        <button type="button" class="btn-action btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;" onclick="editPlanPrice('${p.id}')">
-          <i class="fa-solid fa-pen"></i> Đổi Giá
+      <div style="display:flex;gap:6px;margin-top:auto;">
+        <button type="button" class="btn-action btn-outline" style="flex:1;justify-content:center;font-size:0.78rem;padding:6px 8px;" onclick="openEditPlanModal('${p.id}')">
+          <i class="fa-solid fa-pen"></i> Sửa
         </button>
-        <button type="button" class="btn-action ${p.status === 'ACTIVE' ? 'btn-primary' : 'btn-outline'}" style="flex:1;justify-content:center;font-size:0.8rem;" onclick="togglePlanStatus('${p.id}')">
+        <button type="button" class="btn-action ${p.status === 'ACTIVE' ? 'btn-primary' : 'btn-outline'}" style="flex:1;justify-content:center;font-size:0.78rem;padding:6px 8px;" onclick="togglePlanStatus('${p.id}')">
           ${p.status === 'ACTIVE' ? 'Đang Bán' : 'Tạm Dừng'}
+        </button>
+        <button type="button" class="btn-action-icon" style="color:#ef4444;border:1px solid #cbd5e1;padding:6px 10px;" title="Xóa gói" onclick="deletePlan('${p.id}')">
+          <i class="fa-solid fa-trash-can"></i>
         </button>
       </div>
     </div>
   `).join('');
-}
-
-function editPlanPrice(planId) {
-  const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
-  if (!plan) return;
-
-  const newPrice = prompt(`Nhập giá mới (VNĐ) cho "${plan.name}":`, plan.price);
-  if (newPrice && !isNaN(newPrice)) {
-    plan.price = parseInt(newPrice);
-    plan.priceFormatted = parseInt(newPrice).toLocaleString('vi-VN') + ' ₫';
-    renderPlanCardsGrid();
-    showToast(`Đã cập nhật giá niêm yết cho gói ${plan.name}!`, 'success');
-  }
-}
-
-function togglePlanStatus(planId) {
-  const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
-  if (!plan) return;
-
-  plan.status = plan.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
-  renderPlanCardsGrid();
-  showToast(`Đã chuyển trạng thái bán của gói ${plan.name}!`, 'info');
 }
 
 function renderUserSubscriptionsTable(subs = USER_SUBSCRIPTIONS) {
@@ -5068,11 +5480,12 @@ function showToast(message, type = 'info') {
 }
 
 function openQuickAddModal() {
-  const choice = prompt("Chọn tác vụ thêm nhanh:\n1. Thêm từ vựng mới\n2. Tạo chủ đề mới\n3. Tạo bộ bài tập\n4. Tải lên media\nNhập số (1-4):", "1");
+  const choice = prompt("Chọn tác vụ thêm nhanh:\n1. Thêm từ vựng mới\n2. Tạo chủ đề mới\n3. Thêm gói cước mới\n4. Soạn & gửi thông báo đẩy app\n5. Tải lên media\nNhập số (1-5):", "1");
   if (choice === '1') openAddVocabModal();
   else if (choice === '2') openAddTopicModal();
-  else if (choice === '3') openCreateExerciseModal();
-  else if (choice === '4') openUploadMediaModal();
+  else if (choice === '3') openAddPlanModal();
+  else if (choice === '4') openComposeNotificationModal();
+  else if (choice === '5') openUploadMediaModal();
 }
 
 function openSystemAlertsModal() {
@@ -5107,12 +5520,21 @@ function setupGlobalSearch() {
         return;
       }
 
-      // Tìm giao dịch
-      const foundTxn = PAYMENT_TRANSACTIONS.find(t => t.orderCode.toLowerCase().includes(q));
-      if (foundTxn) {
-        switchAdminTab('transactions');
-        document.getElementById('txnSearchInput').value = q;
-        filterTxnTable();
+      // Tìm gói cước
+      const foundPlan = SUBSCRIPTION_PLANS.find(p => p.name.toLowerCase().includes(q) || (p.code && p.code.toLowerCase().includes(q)));
+      if (foundPlan) {
+        switchAdminTab('subscriptions');
+        const planSearch = document.getElementById('planSearchInput');
+        if (planSearch) { planSearch.value = q; filterPlansCatalog(); }
+        return;
+      }
+
+      // Tìm thông báo đẩy
+      const foundNotif = PUSH_NOTIFICATIONS.find(n => n.title.toLowerCase().includes(q) || n.message.toLowerCase().includes(q) || n.code.toLowerCase().includes(q));
+      if (foundNotif) {
+        switchAdminTab('notifications');
+        const notifSearch = document.getElementById('notifSearchInput');
+        if (notifSearch) { notifSearch.value = q; filterPushNotificationsTable(); }
         return;
       }
 
